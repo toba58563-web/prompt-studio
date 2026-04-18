@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Prompt Studio | Premium AI Prompts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)' }, '50%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.6)' } },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        /* Glassmorphism Effects */
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.12); border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
+        .glass-input { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
+        .glass-input:focus { background: rgba(255, 255, 255, 0.15); border-color: rgba(139, 92, 246, 0.8); box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); outline: none; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.6); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.8); }
+        
+        /* Loading Skeleton */
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 24px; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        /* Toast Animation */
+        .toast-show { animation: toastSlide 0.3s ease-out forwards; }
+        @keyframes toastSlide { from { transform: translateX(-50%) translateY(100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        
+        /* Modal Animation */
+        .modal-animate { animation: modalPop 0.3s ease-out forwards; }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        /* Heart Like Animation */
+        .heart-animation { animation: heartBeat 0.5s ease-in-out; }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+        
+        /* Button Loading State */
+        .btn-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
+        
+        /* Search Container */
+        .search-container { position: relative; width: 100%; max-width: 500px; }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 14px; }
+        .search-input { width: 100%; padding: 14px 20px 14px 45px; font-size: 14px; border-radius: 50px; transition: all 0.3s ease; }
+        .clear-search { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; display: none; }
+        .clear-search:hover { color: rgba(255,255,255,0.9); }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-container { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="glass fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 w-[90%] max-w-6xl">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
+                    <i class="fas fa-magic text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl tracking-tight">Prompt Studio</h1>
+                    <p class="text-white/60 text-xs">Premium AI Prompts</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 flex-1 md:flex-none">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search prompts by title..." class="search-input glass-input text-white placeholder-white/50">
+                    <i class="fas fa-times-circle clear-search" id="clearSearch"></i>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
+                    <i class="fas fa-chart-line text-purple-400 text-sm"></i>
+                    <span class="text-white text-sm font-medium" id="promptCount">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-28 pb-12 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 mb-6">
+                <i class="fas fa-bolt text-yellow-400 text-sm"></i>
+                <span class="text-white/90 text-sm font-medium">Powered by AI | 5000+ Prompts</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+                Generate Amazing AI Art
+            </h1>
+            <p class="text-white/70 text-lg max-w-2xl mx-auto mb-8">
+                Curated collection of premium prompts for Midjourney, DALL-E, and Stable Diffusion.
+                Click copy, watch a quick ad, and get your prompt instantly!
+            </p>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <div class="glass px-6 py-3 rounded-full flex items-center gap-2">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                    <span class="text-white">Premium Quality</span>
+                </div>
+                <div class="glass px-6 py-3 rounded-full flex items-center gap-2">
+                    <i class="fas fa-users text-blue-400"></i>
+                    <span class="text-white">50k+ Creators</span>
+                </div>
+                <div class="glass px-6 py-3 rounded-full flex items-center gap-2">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <span class="text-white">4.9 Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Filter -->
+    <section class="px-4 mb-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" id="categoriesContainer"></div>
+        </div>
+    </section>
+
+    <!-- Prompts Grid -->
+    <section class="px-4 pb-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="promptsGrid">
+                <!-- Loading Skeletons -->
+                <div class="skeleton h-80"></div>
+                <div class="skeleton h-80"></div>
+                <div class="skeleton h-80"></div>
+                <div class="skeleton h-80"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Modal (Premium Design) -->
+    <div id="adModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center hidden transition-all duration-300">
+        <div class="glass-card p-8 max-w-md mx-4 modal-animate">
+            <div class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <i class="fas fa-ad text-white text-4xl"></i>
+                </div>
+                <h3 class="text-white text-2xl font-bold mb-2">Support Our Work</h3>
+                <p class="text-white/70 mb-6">Please watch this short ad to copy the prompt. It helps us keep the platform free!</p>
+                <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-4 mb-6 border border-purple-500/30">
+                    <i class="fas fa-crown text-yellow-400 text-4xl mb-2 block"></i>
+                    <p class="text-white font-semibold">✨ You're supporting creators worldwide ✨</p>
+                    <p class="text-white/50 text-xs mt-1">Ad plays for 3 seconds</p>
+                </div>
+                <button id="watchAdBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all transform hover:scale-105">
+                    <i class="fas fa-play mr-2"></i> Watch Ad (3 sec)
+                </button>
+                <button id="closeAdModal" class="w-full mt-3 text-white/50 hover:text-white/80 text-sm transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200] hidden">
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Copied to clipboard!</span>
+        </div>
+    </div>
+
+    <script>
+        // Mock Database (Replace with your API calls)
+        let currentPrompts = [
+            { id: 1, title: "Ethereal Cyberpunk Samurai", category: "Cyberpunk", prompt: "cinematic cyberpunk samurai standing in neon-lit rain-soaked alley, holographic katana, glowing cybernetic implants, volumetric lighting, 8K, unreal engine 5, ray tracing, --ar 16:9 --v 6", imageUrl: "https://picsum.photos/id/104/400/300", likes: 1247, views: 8923, liked: false },
+            { id: 2, title: "Mystical Forest Portrait", category: "Portrait", prompt: "ethereal forest goddess portrait, glowing bioluminescent flowers in hair, soft golden hour lighting, magical atmosphere, intricate details, 8K, photorealistic, --ar 2:3 --v 6", imageUrl: "https://picsum.photos/id/96/400/300", likes: 2341, views: 15420, liked: false },
+            { id: 3, title: "Neon Tokyo Rain", category: "Cyberpunk", prompt: "cyberpunk tokyo street rain, neon signs reflecting in puddles, holographic geishas, futuristic cityscape, cinematic lighting, blade runner vibes, 8K, --ar 16:9 --v 6", imageUrl: "https://picsum.photos/id/106/400/300", likes: 3128, views: 21034, liked: false },
+            { id: 4, title: "Ancient Dragon Warrior", category: "Fantasy", prompt: "ancient chinese dragon warrior in ornate armor, floating mountains background, epic scale, dramatic lighting, masterpiece, trending on artstation, 8K, --ar 16:9 --v 6", imageUrl: "https://picsum.photos/id/102/400/300", likes: 987, views: 6543, liked: false },
+            { id: 5, title: "Serene Mountain Lake", category: "Nature", prompt: "serene mountain lake at sunrise, mist rising from water, snow-capped peaks reflection, cherry blossoms foreground, peaceful atmosphere, national geographic style, --ar 16:9 --v 6", imageUrl: "https://picsum.photos/id/15/400/300", likes: 2876, views: 18762, liked: false },
+            { id: 6, title: "Steampunk Airship Captain", category: "Portrait", prompt: "steampunk airship captain portrait, victorian-era goggles, leather coat, brass mechanical arm, floating sky city background, detailed illustration, --ar 2:3 --v 6", imageUrl: "https://picsum.photos/id/91/400/300", likes: 654, views: 4321, liked: false }
+        ];
+        
+        let currentCategory = 'All';
+        let currentSearch = '';
+        let pendingPrompt = null;
+        let currentButton = null;
+
+        // DOM Elements
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const promptsGrid = document.getElementById('promptsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+        const promptCount = document.getElementById('promptCount');
+        const adModal = document.getElementById('adModal');
+        const watchAdBtn = document.getElementById('watchAdBtn');
+        const closeAdModal = document.getElementById('closeAdModal');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Categories
+        const categories = ['All', 'Portrait', 'Cyberpunk', 'Fantasy', 'Nature'];
+
+        // Render Categories
+        function renderCategories() {
+            categoriesContainer.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" 
+                    class="px-6 py-2 rounded-full transition-all whitespace-nowrap ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        // Filter by category
+        window.filterCategory = function(category) {
+            currentCategory = category;
+            renderCategories();
+            filterPrompts();
+        };
+
+        // Filter prompts based on category and search
+        function filterPrompts() {
+            let filtered = [...currentPrompts];
+            
+            if (currentCategory !== 'All') {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
+            
+            if (currentSearch) {
+                filtered = filtered.filter(p => 
+                    p.title.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+            }
+            
+            renderPrompts(filtered);
+            promptCount.textContent = `${filtered.length} prompts`;
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            if (currentSearch) {
+                clearSearch.style.display = 'block';
+            } else {
+                clearSearch.style.display = 'none';
+            }
+            filterPrompts();
+        });
+        
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearch = '';
+            clearSearch.style.display = 'none';
+            filterPrompts();
+        });
+
+        // Render Prompts
+        function renderPrompts(prompts) {
+            if (prompts.length === 0) {
+                promptsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-search text-white/40 text-6xl mb-4"></i>
+                        <p class="text-white/60 text-lg">No prompts found</p>
+                        <p class="text-white/40 text-sm mt-2">Try adjusting your search</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            promptsGrid.innerHTML = prompts.map(prompt => `
+                <div class="glass-card overflow-hidden transition-all duration-300 animate-fade-in">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${prompt.imageUrl}" alt="${prompt.title}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                        <div class="absolute top-2 right-2 glass px-2 py-1 rounded-full text-xs text-white">
+                            <i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views)}
+                        </div>
+                        <div class="absolute bottom-2 left-2 glass px-2 py-1 rounded-full text-xs text-white">
+                            ${prompt.category}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-white font-semibold text-lg mb-2">${escapeHtml(prompt.title)}</h3>
+                        <p class="text-white/60 text-sm mb-3 line-clamp-2">${escapeHtml(prompt.prompt.substring(0, 100))}...</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <button onclick="handleLike(${prompt.id})" class="like-btn" data-id="${prompt.id}">
+                                    <i class="fas fa-heart ${prompt.liked ? 'text-red-500' : 'text-white/40'} text-lg transition-all hover:scale-110"></i>
+                                </button>
+                                <span class="text-white/80 text-sm" id="likes-${prompt.id}">${formatNumber(prompt.likes)}</span>
+                            </div>
+                            <button onclick="handleCopyPrompt('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
+                                class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle Like with animation and toggle
+        window.handleLike = function(promptId) {
+            const prompt = currentPrompts.find(p => p.id === promptId);
+            if (prompt) {
+                prompt.liked = !prompt.liked;
+                prompt.likes += prompt.liked ? 1 : -1;
+                
+                // Update UI with animation
+                const likeIcon = document.querySelector(`.like-btn[data-id="${promptId}"] i`);
+                const likesSpan = document.getElementById(`likes-${promptId}`);
+                
+                if (likeIcon) {
+                    likeIcon.classList.add('heart-animation');
+                    if (prompt.liked) {
+                        likeIcon.classList.remove('text-white/40');
+                        likeIcon.classList.add('text-red-500');
+                    } else {
+                        likeIcon.classList.remove('text-red-500');
+                        likeIcon.classList.add('text-white/40');
+                    }
+                    setTimeout(() => {
+                        likeIcon.classList.remove('heart-animation');
+                    }, 500);
+                }
+                
+                if (likesSpan) {
+                    likesSpan.textContent = formatNumber(prompt.likes);
+                }
+                
+                // Show toast for like
+                showToast(prompt.liked ? '❤️ Added to favorites!' : '💔 Removed from favorites');
+            }
+        };
+
+        // Enhanced Copy with Ad Simulation
+        window.handleCopyPrompt = function(promptText, button) {
+            pendingPrompt = promptText;
+            currentButton = button;
+            
+            // Show loading state on button
+            const originalHTML = button.innerHTML;
+            button.classList.add('btn-loading');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span> Loading Ad...</span>';
+            
+            // Simulate ad loading for 3 seconds
+            setTimeout(() => {
+                // Reset button
+                button.classList.remove('btn-loading');
+                button.innerHTML = originalHTML;
+                
+                // Show ad modal
+                showAdModal();
+            }, 3000);
+        };
+
+        // Show Ad Modal
+        function showAdModal() {
+            adModal.classList.remove('hidden');
+        }
+
+        // Close Ad Modal
+        function closeAdModalFunc() {
+            adModal.classList.add('hidden');
+            pendingPrompt = null;
+            currentButton = null;
+        }
+
+        // Watch Ad and Copy
+        function watchAdAndCopy() {
+            // Simulate ad watching
+            watchAdBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Playing ad...';
+            watchAdBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Copy to clipboard
+                if (pendingPrompt) {
+                    copyToClipboard(pendingPrompt);
+                    showToast('✅ Prompt copied to clipboard! 🎉');
+                    
+                    // Add animation to the copied button
+                    if (currentButton) {
+                        const originalHTML = currentButton.innerHTML;
+                        currentButton.innerHTML = '<i class="fas fa-check"></i><span> Copied!</span>';
+                        setTimeout(() => {
+                            if (currentButton) currentButton.innerHTML = originalHTML;
+                        }, 2000);
+                    }
+                }
+                
+                // Reset and close modal
+                adModal.classList.add('hidden');
+                watchAdBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Watch Ad (3 sec)';
+                watchAdBtn.disabled = false;
+                pendingPrompt = null;
+                currentButton = null;
+            }, 2000);
+        }
+
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                console.log('Copied successfully');
+            } catch (err) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Show Toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-show');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-show');
+            }, 3000);
+        }
+
+        // Helper Functions
+        function formatNumber(num) {
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+            return num.toString();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event Listeners for Modal
+        watchAdBtn.addEventListener('click', watchAdAndCopy);
+        closeAdModal.addEventListener('click', closeAdModalFunc);
+        
+        // Close modal on outside click
+        adModal.addEventListener('click', (e) => {
+            if (e.target === adModal) {
+                closeAdModalFunc();
+            }
+        });
+
+        // Initialize
+        renderCategories();
+        filterPrompts();
+        
+        // Update prompt count
+        promptCount.textContent = `${currentPrompts.length} prompts`;
+        
+        // Add welcome toast
+        setTimeout(() => {
+            showToast('✨ Welcome to Prompt Studio! Click copy on any prompt ✨');
+        }, 1000);
+    </script>
+</body>
+</html>
