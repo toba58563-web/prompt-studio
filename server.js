@@ -164,6 +164,15 @@ app.get('/admin', (req, res) => {
 });
 
 // Start server
+// Database se saare prompts fetch karne ka rasta
+app.get('/api/prompts', async (req, res) => {
+    try {
+        const prompts = await Prompt.find().sort({ createdAt: -1 });
+        res.json(prompts);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`\n🚀 Server running on http://localhost:${PORT}`);
     console.log(`📱 Main App: http://localhost:${PORT}`);
