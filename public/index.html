@@ -298,7 +298,7 @@
             <div class="max-w-6xl mx-auto text-center">
                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-3 py-1 mb-3">
                     <i class="fas fa-bolt text-yellow-400 text-xs"></i>
-                    <span class="text-white/90 text-xs font-medium">Powered by MongoDB Atlas</span>
+                    <span class="text-white/90 text-xs font-medium">Powered by Prompt Studio Atlas</span>
                 </div>
                 <h1 class="text-2xl md:text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
                     Generate Amazing AI Art
@@ -399,7 +399,7 @@
                     <p class="text-white font-semibold">Get Premium Access</p>
                 </div>
                 <button id="watchAdBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all">
-                    Watch Ad (5 sec)
+                    Watch Ad
                 </button>
             </div>
         </div>
@@ -419,6 +419,7 @@
         let currentCategory = 'All';
         let currentSearchTerm = '';
         let pendingPromptText = null;
+        let currentCopyButton = null;
 
         // ========== SIDEBAR FUNCTIONS ==========
         function openSidebar() {
@@ -474,6 +475,45 @@
                     break;
                 default:
                     showToast('✨ Feature coming soon!', 1500);
+            }
+        }
+
+        // ========== COPY BUTTON LOGIC ==========
+        function handleCopyClick(text, buttonElement) {
+            // Store the prompt text
+            pendingPromptText = text;
+            currentCopyButton = buttonElement;
+            
+            // Show loading spinner on button for 2 seconds
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> Loading...';
+            
+            // After 2 seconds, show the ad modal
+            setTimeout(() => {
+                // Reset button
+                buttonElement.disabled = false;
+                buttonElement.innerHTML = originalHTML;
+                
+                // Show ad modal
+                document.getElementById('adModal').classList.remove('hidden');
+            }, 2000);
+        }
+
+        // ========== COPY TO CLIPBOARD ==========
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('✅ Prompt copied to clipboard!');
+            } catch (err) {
+                // Fallback method
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('✅ Prompt copied!');
             }
         }
 
@@ -544,7 +584,7 @@
                     </div>
                     <div class="p-3">
                         <h3 class="text-white font-semibold text-base mb-1 line-clamp-1">${escapeHtml(prompt.title)}</h3>
-                        <p class="text-white/60 text-xs mb-2 line-clamp-3">${escapeHtml(prompt.prompt || prompt.promptText || 'No prompt available')}</p>
+                        <p class="text-white/60 text-xs mb-2 line-clamp-3">${escapeHtml(prompt.prompt || 'No prompt available')}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}">
@@ -552,8 +592,8 @@
                                 </button>
                                 <span class="text-white/80 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
-                            <button onclick="handleCopyWithAd('${escapeHtml(prompt.prompt || prompt.promptText).replace(/'/g, "\\'")}')" 
-                                    class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
+                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
+                                    class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
                                 <i class="fas fa-copy text-xs"></i> Copy
                             </button>
                         </div>
@@ -638,7 +678,7 @@
                 const searchLower = currentSearchTerm.toLowerCase();
                 filtered = filtered.filter(p => 
                     p.title.toLowerCase().includes(searchLower) ||
-                    (p.prompt || p.promptText || '').toLowerCase().includes(searchLower)
+                    (p.prompt || '').toLowerCase().includes(searchLower)
                 );
             }
             
@@ -686,27 +726,6 @@
             }
         }
 
-        // ========== AD-TRIGGERED COPY ==========
-        function handleCopyWithAd(promptText) {
-            pendingPromptText = promptText;
-            document.getElementById('adModal').classList.remove('hidden');
-        }
-
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('✅ Prompt copied to clipboard!');
-            } catch (err) {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showToast('✅ Prompt copied!');
-            }
-        }
-
         // ========== HELPER FUNCTIONS ==========
         function escapeHtml(text) {
             if (!text) return '';
@@ -748,28 +767,43 @@
             }
         }
 
-        // ========== EVENT LISTENERS ==========
+        // ========== AD MODAL LOGIC ==========
         document.getElementById('watchAdBtn').addEventListener('click', () => {
             const btn = document.getElementById('watchAdBtn');
+            const originalText = btn.innerHTML;
+            
+            // Show loading state for 3 seconds
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading ad...';
             
             setTimeout(() => {
+                // Hide modal
                 document.getElementById('adModal').classList.add('hidden');
+                
+                // Copy the text to clipboard
                 if (pendingPromptText) {
                     copyToClipboard(pendingPromptText);
                     pendingPromptText = null;
                 }
+                
+                // Reset button
                 btn.disabled = false;
-                btn.innerHTML = 'Watch Ad (5 sec)';
-            }, 2000);
+                btn.innerHTML = originalText;
+                
+                // Reset current copy button if exists
+                if (currentCopyButton) {
+                    currentCopyButton = null;
+                }
+            }, 3000);
         });
 
+        // ========== SEARCH EVENT LISTENER ==========
         document.getElementById('searchInput').addEventListener('input', (e) => {
             currentSearchTerm = e.target.value;
             filterPrompts();
         });
 
+        // ========== CLOSE SIDEBAR ON ESCAPE ==========
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSidebar();
         });
