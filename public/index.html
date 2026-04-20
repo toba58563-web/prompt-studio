@@ -14,6 +14,7 @@
                         'fade-in': 'fadeIn 0.5s ease-in-out',
                         'slide-up': 'slideUp 0.3s ease-out',
                         'slide-in': 'slideIn 0.3s ease-out',
+                        'spin-slow': 'spin 0.8s linear infinite',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
@@ -111,6 +112,27 @@
             background: rgba(139, 92, 246, 0.8);
         }
         
+        /* Hide scrollbar for categories on mobile but keep functionality */
+        .categories-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 92, 246, 0.6) rgba(255, 255, 255, 0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .categories-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .categories-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .categories-scroll::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.6);
+            border-radius: 10px;
+        }
+        
         /* Skeleton Loading Animation */
         .skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
@@ -187,6 +209,56 @@
             transform: scale(0.9);
         }
         
+        /* Image Modal Styles */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .image-modal.active {
+            display: flex;
+        }
+        
+        .image-modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-modal-close:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.8);
+        }
+        
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .container {
@@ -196,10 +268,77 @@
             .glass-card {
                 border-radius: 20px;
             }
+            .image-modal-close {
+                top: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 30px;
+            }
+        }
+        
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .splash-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .splash-content {
+            text-align: center;
+            animation: splashPulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        .splash-icon {
+            font-size: 80px;
+            color: white;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+        }
+        
+        .splash-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">
+                <i class="fas fa-magic"></i>
+            </div>
+            <div class="splash-title">Prompt Studio</div>
+        </div>
+    </div>
+
+    <!-- Image Modal for Full View -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img id="modalImage" class="image-modal-content" alt="Full size prompt preview">
+    </div>
+
     <!-- Sidebar Overlay -->
     <div id="sidebarOverlay" class="overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="closeSidebar()"></div>
 
@@ -317,10 +456,10 @@
             </div>
         </section>
 
-        <!-- Categories -->
+        <!-- Horizontal Categories with Scroll -->
         <section class="px-4 mb-4">
             <div class="max-w-6xl mx-auto">
-                <div class="flex gap-2 overflow-x-auto pb-2" id="categoriesContainer"></div>
+                <div class="flex gap-2 overflow-x-auto pb-2 categories-scroll" id="categoriesContainer"></div>
             </div>
         </section>
 
@@ -385,7 +524,7 @@
         </div>
     </footer>
 
-    <!-- Ad Modal -->
+    <!-- Ad Modal with Cancel Button -->
     <div id="adModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden">
         <div class="glass-card p-6 max-w-md mx-4 modal-animate">
             <div class="text-center">
@@ -401,6 +540,10 @@
                 <button id="watchAdBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all">
                     Watch Ad
                 </button>
+                <!-- Cancel Button -->
+                <button onclick="closeAdModal()" class="mt-4 text-gray-400 hover:text-white text-sm transition-colors">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -414,6 +557,37 @@
     </div>
 
     <script>
+        // ========== SPLASH SCREEN (2 SECONDS) ==========
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            splash.classList.add('hide');
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 500);
+        }, 2000);
+
+        // ========== IMAGE MODAL FUNCTIONS ==========
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = imageUrl;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close image modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+
         // ========== GLOBAL VARIABLES ==========
         let currentPrompts = [];
         let currentCategory = 'All';
@@ -478,7 +652,7 @@
             }
         }
 
-        // ========== COPY BUTTON LOGIC ==========
+        // ========== COPY BUTTON LOGIC (2 sec loading then ad modal) ==========
         function handleCopyClick(text, buttonElement) {
             // Store the prompt text
             pendingPromptText = text;
@@ -498,6 +672,25 @@
                 // Show ad modal
                 document.getElementById('adModal').classList.remove('hidden');
             }, 2000);
+        }
+
+        // ========== CLOSE AD MODAL ==========
+        function closeAdModal() {
+            const modal = document.getElementById('adModal');
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            
+            // Reset watch ad button if it's in loading state
+            if (watchAdBtn) {
+                watchAdBtn.disabled = false;
+                watchAdBtn.innerHTML = 'Watch Ad';
+            }
+            
+            // Clear pending prompt
+            pendingPromptText = null;
+            currentCopyButton = null;
+            
+            // Hide modal
+            modal.classList.add('hidden');
         }
 
         // ========== COPY TO CLIPBOARD ==========
@@ -570,11 +763,10 @@
             
             grid.innerHTML = prompts.map(prompt => `
                 <div class="glass-card overflow-hidden transition-all duration-300 animate-fade-in" data-prompt-id="${prompt._id}">
-                    <div class="relative h-40 overflow-hidden">
+                    <div class="relative h-40 overflow-hidden cursor-pointer" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/300'}')">
                         <img src="${prompt.imageUrl || 'https://picsum.photos/400/300'}" 
                              alt="${escapeHtml(prompt.title)}" 
-                             class="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                             onerror="this.src='https://picsum.photos/400/300'">
+                             class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
                         <div class="absolute top-2 right-2 glass px-2 py-0.5 rounded-full text-xs text-white">
                             <i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}
                         </div>
@@ -707,9 +899,7 @@
         // ========== RENDER CATEGORIES ==========
         async function renderCategories() {
             try {
-                let categories = ['All'];
-                const uniqueCats = [...new Set(currentPrompts.map(p => p.category).filter(Boolean))];
-                categories.push(...uniqueCats);
+                let categories = ['All', 'Portrait', 'Nature', 'Cinematic', 'Cyberpunk', 'Fantasy', 'Abstract'];
                 
                 const container = document.getElementById('categoriesContainer');
                 if (!container) return;
@@ -767,7 +957,7 @@
             }
         }
 
-        // ========== AD MODAL LOGIC ==========
+        // ========== AD MODAL LOGIC WITH CANCEL SUPPORT ==========
         document.getElementById('watchAdBtn').addEventListener('click', () => {
             const btn = document.getElementById('watchAdBtn');
             const originalText = btn.innerHTML;
@@ -805,7 +995,13 @@
 
         // ========== CLOSE SIDEBAR ON ESCAPE ==========
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeSidebar();
+            if (e.key === 'Escape') {
+                closeSidebar();
+                // Also close ad modal if open
+                if (!document.getElementById('adModal').classList.contains('hidden')) {
+                    closeAdModal();
+                }
+            }
         });
 
         // ========== INITIALIZE ==========
