@@ -52,16 +52,17 @@
         .glass-card {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
-            border-radius: 24px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             transition: all 0.3s ease;
+            overflow: hidden;
         }
         
         .glass-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
         
         /* Sidebar Glassmorphism */
@@ -138,7 +139,7 @@
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
-            border-radius: 24px;
+            border-radius: 20px;
         }
         
         @keyframes loading {
@@ -147,16 +148,9 @@
         }
         
         /* Line Clamping */
-        .line-clamp-1 {
+        .line-clamp-2 {
             display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -259,6 +253,38 @@
             background: rgba(0,0,0,0.8);
         }
         
+        /* Aspect Ratio for Images */
+        .image-container {
+            aspect-ratio: 2 / 3;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .glass-card:hover .image-container img {
+            transform: scale(1.05);
+        }
+        
+        /* Compact Card Styles */
+        .compact-title {
+            font-size: 0.9rem;
+            line-height: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .compact-prompt {
+            font-size: 0.7rem;
+            line-height: 1rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .container {
@@ -266,7 +292,7 @@
                 padding-right: 12px;
             }
             .glass-card {
-                border-radius: 20px;
+                border-radius: 16px;
             }
             .image-modal-close {
                 top: 15px;
@@ -274,6 +300,12 @@
                 width: 40px;
                 height: 40px;
                 font-size: 30px;
+            }
+            .compact-title {
+                font-size: 0.8rem;
+            }
+            .compact-prompt {
+                font-size: 0.65rem;
             }
         }
         
@@ -433,44 +465,46 @@
     <!-- Main Content -->
     <main>
         <!-- Compact Hero Section -->
-        <section class="pt-16 pb-3 px-4">
+        <section class="pt-16 pb-2 px-4">
             <div class="max-w-6xl mx-auto text-center">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-3 py-1 mb-3">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-3 py-1 mb-2">
                     <i class="fas fa-bolt text-yellow-400 text-xs"></i>
                     <span class="text-white/90 text-xs font-medium">Powered by Prompt Studio Atlas</span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+                <h1 class="text-xl md:text-2xl font-bold text-white bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
                     Generate Amazing AI Art
                 </h1>
             </div>
         </section>
 
         <!-- Search Bar -->
-        <section class="px-4 mb-3">
+        <section class="px-4 mb-2">
             <div class="max-w-6xl mx-auto">
                 <div class="relative">
                     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 text-sm"></i>
                     <input type="text" id="searchInput" placeholder="Search prompts..." 
-                           class="glass w-full px-12 py-3 text-white placeholder-white/50 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+                           class="glass w-full px-12 py-2.5 text-white placeholder-white/50 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
                 </div>
             </div>
         </section>
 
         <!-- Horizontal Categories with Scroll -->
-        <section class="px-4 mb-4">
+        <section class="px-4 mb-3">
             <div class="max-w-6xl mx-auto">
                 <div class="flex gap-2 overflow-x-auto pb-2 categories-scroll" id="categoriesContainer"></div>
             </div>
         </section>
 
-        <!-- Prompts Grid -->
-        <section class="px-4 pb-8">
+        <!-- Prompts Grid - 2 Column Layout -->
+        <section class="px-4 pb-20">
             <div class="max-w-6xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="promptsGrid">
-                    <div class="skeleton h-80"></div>
-                    <div class="skeleton h-80"></div>
-                    <div class="skeleton h-80"></div>
-                    <div class="skeleton h-80"></div>
+                <div class="grid grid-cols-2 gap-3 md:gap-4" id="promptsGrid">
+                    <div class="skeleton h-64"></div>
+                    <div class="skeleton h-64"></div>
+                    <div class="skeleton h-64"></div>
+                    <div class="skeleton h-64"></div>
+                    <div class="skeleton h-64"></div>
+                    <div class="skeleton h-64"></div>
                 </div>
             </div>
         </section>
@@ -478,40 +512,40 @@
 
     <!-- Premium Glassmorphism Footer -->
     <footer class="footer-glass mt-8">
-        <div class="max-w-6xl mx-auto px-4 py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-3 mb-3">
                 <div class="text-center md:text-left">
                     <div class="flex items-center gap-2 justify-center md:justify-start">
-                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
-                            <i class="fas fa-magic text-white text-sm"></i>
+                        <div class="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+                            <i class="fas fa-magic text-white text-xs"></i>
                         </div>
                         <div>
-                            <h3 class="text-white font-bold text-lg">Prompt Studio</h3>
+                            <h3 class="text-white font-bold text-sm">Prompt Studio</h3>
                             <p class="text-white/50 text-xs">Elevate your creativity</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex gap-6">
-                    <a href="#" onclick="handleMenuClick('privacy')" class="text-white/60 hover:text-white text-xs transition-colors">Privacy Policy</a>
-                    <a href="#" onclick="showToast('📜 Terms of Service: Use responsibly', 3000)" class="text-white/60 hover:text-white text-xs transition-colors">Terms of Service</a>
-                    <a href="#" onclick="handleMenuClick('contact')" class="text-white/60 hover:text-white text-xs transition-colors">Contact Us</a>
+                <div class="flex gap-4">
+                    <a href="#" onclick="handleMenuClick('privacy')" class="text-white/60 hover:text-white text-xs transition-colors">Privacy</a>
+                    <a href="#" onclick="showToast('📜 Terms of Service: Use responsibly', 3000)" class="text-white/60 hover:text-white text-xs transition-colors">Terms</a>
+                    <a href="#" onclick="handleMenuClick('contact')" class="text-white/60 hover:text-white text-xs transition-colors">Contact</a>
                 </div>
 
-                <div class="flex gap-4">
-                    <a href="#" onclick="window.open('https://instagram.com', '_blank')" class="w-9 h-9 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-instagram text-white text-base"></i>
+                <div class="flex gap-3">
+                    <a href="#" onclick="window.open('https://instagram.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
+                        <i class="fab fa-instagram text-white text-xs"></i>
                     </a>
-                    <a href="#" onclick="window.open('https://youtube.com', '_blank')" class="w-9 h-9 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-youtube text-white text-base"></i>
+                    <a href="#" onclick="window.open('https://youtube.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
+                        <i class="fab fa-youtube text-white text-xs"></i>
                     </a>
-                    <a href="#" onclick="window.open('https://github.com', '_blank')" class="w-9 h-9 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-github text-white text-base"></i>
+                    <a href="#" onclick="window.open('https://github.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
+                        <i class="fab fa-github text-white text-xs"></i>
                     </a>
                 </div>
             </div>
 
-            <div class="border-t border-white/10 my-4"></div>
+            <div class="border-t border-white/10 my-3"></div>
 
             <div class="flex flex-col md:flex-row justify-between items-center gap-2">
                 <p class="text-white/40 text-xs text-center">© 2025 Prompt Studio. All rights reserved.</p>
@@ -540,7 +574,6 @@
                 <button id="watchAdBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all">
                     Watch Ad
                 </button>
-                <!-- Cancel Button -->
                 <button onclick="closeAdModal()" class="mt-4 text-gray-400 hover:text-white text-sm transition-colors">
                     Cancel
                 </button>
@@ -581,7 +614,6 @@
             document.body.style.overflow = '';
         }
 
-        // Close image modal on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeImageModal();
@@ -652,54 +684,41 @@
             }
         }
 
-        // ========== COPY BUTTON LOGIC (2 sec loading then ad modal) ==========
+        // ========== COPY BUTTON LOGIC ==========
         function handleCopyClick(text, buttonElement) {
-            // Store the prompt text
             pendingPromptText = text;
             currentCopyButton = buttonElement;
             
-            // Show loading spinner on button for 2 seconds
             const originalHTML = buttonElement.innerHTML;
             buttonElement.disabled = true;
-            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> Loading...';
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
             
-            // After 2 seconds, show the ad modal
             setTimeout(() => {
-                // Reset button
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = originalHTML;
-                
-                // Show ad modal
                 document.getElementById('adModal').classList.remove('hidden');
             }, 2000);
         }
 
-        // ========== CLOSE AD MODAL ==========
         function closeAdModal() {
             const modal = document.getElementById('adModal');
             const watchAdBtn = document.getElementById('watchAdBtn');
             
-            // Reset watch ad button if it's in loading state
             if (watchAdBtn) {
                 watchAdBtn.disabled = false;
                 watchAdBtn.innerHTML = 'Watch Ad';
             }
             
-            // Clear pending prompt
             pendingPromptText = null;
             currentCopyButton = null;
-            
-            // Hide modal
             modal.classList.add('hidden');
         }
 
-        // ========== COPY TO CLIPBOARD ==========
         async function copyToClipboard(text) {
             try {
                 await navigator.clipboard.writeText(text);
-                showToast('✅ Prompt copied to clipboard!');
+                showToast('✅ Prompt copied!');
             } catch (err) {
-                // Fallback method
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -715,7 +734,7 @@
             try {
                 const grid = document.getElementById('promptsGrid');
                 if (grid) {
-                    grid.innerHTML = `<div class="skeleton h-80"></div><div class="skeleton h-80"></div><div class="skeleton h-80"></div><div class="skeleton h-80"></div>`;
+                    grid.innerHTML = `<div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>`;
                 }
                 
                 const response = await fetch('/api/prompts');
@@ -745,47 +764,47 @@
             }
         }
 
-        // ========== RENDER PROMPTS ==========
+        // ========== RENDER PROMPTS - COMPACT 2 COLUMN ==========
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
             
             if (!prompts || prompts.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-12">
+                    <div class="col-span-2 text-center py-12">
                         <i class="fas fa-inbox text-white/40 text-6xl mb-4"></i>
                         <p class="text-white/60 text-lg">No prompts found</p>
-                        <p class="text-white/40 text-sm mt-2">Try changing your search or filter criteria</p>
                     </div>
                 `;
                 return;
             }
             
             grid.innerHTML = prompts.map(prompt => `
-                <div class="glass-card overflow-hidden transition-all duration-300 animate-fade-in" data-prompt-id="${prompt._id}">
-                    <div class="relative h-40 overflow-hidden cursor-pointer" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/300'}')">
-                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/300'}" 
+                <div class="glass-card transition-all duration-300 animate-fade-in" data-prompt-id="${prompt._id}">
+                    <div class="image-container" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/600'}')">
+                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" 
                              alt="${escapeHtml(prompt.title)}" 
-                             class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
-                        <div class="absolute top-2 right-2 glass px-2 py-0.5 rounded-full text-xs text-white">
+                             loading="lazy"
+                             onerror="this.src='https://picsum.photos/400/600'">
+                        <div class="absolute top-2 right-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
                             <i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}
                         </div>
-                        <div class="absolute bottom-2 left-2 glass px-2 py-0.5 rounded-full text-xs text-white">
+                        <div class="absolute bottom-2 left-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
                             ${escapeHtml(prompt.category || 'General')}
                         </div>
                     </div>
-                    <div class="p-3">
-                        <h3 class="text-white font-semibold text-base mb-1 line-clamp-1">${escapeHtml(prompt.title)}</h3>
-                        <p class="text-white/60 text-xs mb-2 line-clamp-3">${escapeHtml(prompt.prompt || 'No prompt available')}</p>
+                    <div class="p-2">
+                        <h3 class="text-white font-semibold compact-title mb-1 line-clamp-1">${escapeHtml(prompt.title)}</h3>
+                        <p class="compact-prompt mb-2 line-clamp-2">${escapeHtml(prompt.prompt || 'No prompt available')}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
                                 <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}">
                                     <i class="fas fa-heart ${prompt.isLiked ? 'text-red-500' : 'text-white/60'} text-xs"></i>
                                 </button>
-                                <span class="text-white/80 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
+                                <span class="text-white/70 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
                             <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
-                                    class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
+                                    class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
                                 <i class="fas fa-copy text-xs"></i> Copy
                             </button>
                         </div>
@@ -907,7 +926,7 @@
                 container.innerHTML = categories.map(cat => `
                     <button data-category-btn="${cat}" 
                             onclick="filterCategory('${cat}')"
-                            class="px-4 py-1.5 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">
+                            class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">
                         ${cat}
                     </button>
                 `).join('');
@@ -946,7 +965,7 @@
             const grid = document.getElementById('promptsGrid');
             if (grid) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-12">
+                    <div class="col-span-2 text-center py-12">
                         <i class="fas fa-exclamation-triangle text-yellow-400 text-6xl mb-4"></i>
                         <p class="text-white/80 text-lg">${message}</p>
                         <button onclick="fetchPrompts()" class="mt-4 glass px-6 py-2 rounded-full text-white hover:bg-white/20 transition-all">
@@ -957,47 +976,40 @@
             }
         }
 
-        // ========== AD MODAL LOGIC WITH CANCEL SUPPORT ==========
+        // ========== AD MODAL LOGIC ==========
         document.getElementById('watchAdBtn').addEventListener('click', () => {
             const btn = document.getElementById('watchAdBtn');
             const originalText = btn.innerHTML;
             
-            // Show loading state for 3 seconds
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading ad...';
             
             setTimeout(() => {
-                // Hide modal
                 document.getElementById('adModal').classList.add('hidden');
                 
-                // Copy the text to clipboard
                 if (pendingPromptText) {
                     copyToClipboard(pendingPromptText);
                     pendingPromptText = null;
                 }
                 
-                // Reset button
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 
-                // Reset current copy button if exists
                 if (currentCopyButton) {
                     currentCopyButton = null;
                 }
             }, 3000);
         });
 
-        // ========== SEARCH EVENT LISTENER ==========
+        // ========== EVENT LISTENERS ==========
         document.getElementById('searchInput').addEventListener('input', (e) => {
             currentSearchTerm = e.target.value;
             filterPrompts();
         });
 
-        // ========== CLOSE SIDEBAR ON ESCAPE ==========
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeSidebar();
-                // Also close ad modal if open
                 if (!document.getElementById('adModal').classList.contains('hidden')) {
                     closeAdModal();
                 }
