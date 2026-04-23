@@ -39,6 +39,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            padding-bottom: 90px; /* Space for banner ad */
         }
         
         /* Glassmorphism Effects */
@@ -285,6 +286,44 @@
             color: rgba(255,255,255,0.6);
         }
         
+        /* Fixed Banner Ad Container */
+        .banner-ad-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 25;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70px;
+            padding: 8px 12px;
+        }
+        
+        .banner-ad-container .ad-space {
+            width: 100%;
+            max-width: 728px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Ad banner placeholder - replace with actual ad code */
+        .ad-placeholder {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            width: 100%;
+        }
+        
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .container {
@@ -306,6 +345,13 @@
             }
             .compact-prompt {
                 font-size: 0.65rem;
+            }
+            body {
+                padding-bottom: 80px;
+            }
+            .banner-ad-container {
+                min-height: 70px;
+                padding: 6px 10px;
             }
         }
         
@@ -558,6 +604,17 @@
         </div>
     </footer>
 
+    <!-- Fixed Banner Ad Container -->
+    <div id="bannerAdContainer" class="banner-ad-container">
+        <div class="ad-space">
+            <!-- 🔴 YAHAN APNA BANNER AD CODE LAGAYEIN (Monetag / Adsterra) -->
+            <div class="ad-placeholder" id="bannerAdPlaceholder">
+    <script src="https://quge5.com/88/tag.min.js" data-zone="232904" async data-cfasync="false"></script>
+</div>
+            <!-- Banner Ad Code yahan paste karein -->
+        </div>
+    </div>
+
     <!-- Ad Modal with Cancel Button -->
     <div id="adModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden">
         <div class="glass-card p-6 max-w-md mx-4 modal-animate">
@@ -581,40 +638,130 @@
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[200] hidden">
-        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl">
-            <i class="fas fa-check-circle"></i>
-            <span id="toastMessage">Copied!</span>
+    <!-- Toast for loading messages -->
+    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-[200] hidden">
+        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span id="toastMessage">Loading...</span>
         </div>
     </div>
 
     <script>
-        // ========== ADSTERRA / MONETAG VIDEO AD FUNCTION ==========
-        // 🔴 IMPORTANT: Is link ko apne actual Adsterra/Monetag direct link se replace karein
+        // ========== ADSTERRA / MONETAG CONFIGURATION ==========
+        // 🔴 Is link ko apne actual Monetag/Adsterra direct link se replace karein
         const ADSTERRA_LINK = "https://omg10.com/4/10914263";
         
-        function triggerVideoAd(promptText) {
-            // Store prompt text for later use
-            window.pendingPromptText = promptText;
+        let pendingPromptText = null;
+        let currentCopyButton = null;
+
+        // ========== TOAST FUNCTION (Updated for loading states) ==========
+        function showToast(message, isError = false, duration = 2000) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = toast.querySelector('i');
             
-            // Open Adsterra/Monetag ad in new tab/window
-            window.open(ADSTERRA_LINK, '_blank');
+            toastMsg.textContent = message;
             
-            // Send signal to App Inventor that ad has been triggered
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString('done');
+            if (isError) {
+                toastIcon.className = 'fas fa-exclamation-circle mr-2';
+                toast.querySelector('div').className = 'bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
             } else {
-                // Fallback for web testing
-                console.log('Ad triggered for prompt:', promptText);
-                console.log('AppInventor signal: done');
+                toastIcon.className = 'fas fa-spinner fa-spin mr-2';
+                toast.querySelector('div').className = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
             }
             
-            // Show toast message
-            showToast('📺 Please watch the ad to continue', 3000);
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-show');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-show');
+            }, duration);
+        }
+        
+        function showSuccessToast(message, duration = 2000) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.textContent = message;
+            toast.querySelector('div').className = 'bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
+            toast.querySelector('i').className = 'fas fa-check-circle mr-2';
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-show');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-show');
+            }, duration);
         }
 
-        // ========== SPLASH SCREEN (2 SECONDS) ==========
+        // ========== UPDATED COPY BUTTON LOGIC ==========
+        function handleCopyClick(text, buttonElement) {
+            // Store prompt text
+            pendingPromptText = text;
+            currentCopyButton = buttonElement;
+            
+            // Show loading state on button
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+            
+            // Show toast: '⏳ Processing...' for 2 seconds
+            showToast('⏳ Processing...', false, 2000);
+            
+            // After 2 seconds, show ad modal
+            setTimeout(() => {
+                // Reset button
+                buttonElement.disabled = false;
+                buttonElement.innerHTML = originalHTML;
+                
+                // Show ad modal
+                document.getElementById('adModal').classList.remove('hidden');
+            }, 2000);
+        }
+
+        // ========== CLOSE AD MODAL ==========
+        function closeAdModal() {
+            const modal = document.getElementById('adModal');
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            
+            if (watchAdBtn) {
+                watchAdBtn.disabled = false;
+                watchAdBtn.innerHTML = 'Watch Ad';
+            }
+            
+            pendingPromptText = null;
+            currentCopyButton = null;
+            modal.classList.add('hidden');
+        }
+
+        // ========== COPY TO CLIPBOARD ==========
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showSuccessToast('✅ Prompt copied to clipboard!', 2000);
+                return true;
+            } catch (err) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showSuccessToast('✅ Prompt copied!', 2000);
+                return true;
+            }
+        }
+
+        // ========== OPEN ADSTERRA LINK ==========
+        function openAdLink() {
+            window.open(ADSTERRA_LINK, '_blank');
+            // Send signal to App Inventor
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString('done');
+            }
+            console.log('Ad link opened:', ADSTERRA_LINK);
+        }
+
+        // ========== SPLASH SCREEN ==========
         setTimeout(() => {
             const splash = document.getElementById('splashScreen');
             splash.classList.add('hide');
@@ -637,19 +784,6 @@
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeImageModal();
-            }
-        });
-
-        // ========== GLOBAL VARIABLES ==========
-        let currentPrompts = [];
-        let currentCategory = 'All';
-        let currentSearchTerm = '';
-        let pendingPromptText = null;
-        let currentCopyButton = null;
 
         // ========== SIDEBAR FUNCTIONS ==========
         function openSidebar() {
@@ -676,85 +810,43 @@
             
             switch(action) {
                 case 'follow':
-                    showToast('📱 Follow us on Instagram: @promptstudio', 3000);
+                    showSuccessToast('📱 Follow us on Instagram: @promptstudio', 3000);
                     setTimeout(() => window.open('https://instagram.com', '_blank'), 1500);
                     break;
                 case 'howto':
-                    showToast('📖 How to Use: 1. Browse prompts 2. Click Copy 3. Watch ad 4. Paste in Midjourney/DALL-E', 4000);
+                    showToast('📖 How to Use: 1. Browse prompts 2. Click Copy 3. Watch ad 4. Paste in Midjourney/DALL-E', false, 4000);
                     break;
                 case 'share':
                     if (navigator.share) {
                         navigator.share({ title: 'Prompt Studio', text: 'Check out this amazing AI Prompt collection!', url: window.location.href })
-                            .catch(() => showToast('✨ Share cancelled', 1500));
+                            .catch(() => showToast('✨ Share cancelled', false, 1500));
                     } else {
                         navigator.clipboard.writeText(window.location.href);
-                        showToast('🔗 Link copied to clipboard!', 2000);
+                        showSuccessToast('🔗 Link copied to clipboard!', 2000);
                     }
                     break;
                 case 'rate':
-                    showToast('⭐ Rate us 5 stars on the app store!', 2000);
+                    showToast('⭐ Rate us 5 stars on the app store!', false, 2000);
                     break;
                 case 'contact':
-                    showToast('📧 Contact: support@promptstudio.com', 3000);
+                    showToast('📧 Contact: support@promptstudio.com', false, 3000);
                     break;
                 case 'developer':
-                    showToast('👨‍💻 Developed by Prompt Studio Team\nVersion 1.0.1-Stable', 4000);
+                    showToast('👨‍💻 Developed by Prompt Studio Team\nVersion 1.0.1-Stable', false, 4000);
                     break;
                 case 'privacy':
-                    showToast('🔒 Privacy Policy: We don\'t store your personal data. Prompts are saved in MongoDB Atlas.', 4000);
+                    showToast('🔒 Privacy Policy: We don\'t store your personal data. Prompts are saved in MongoDB Atlas.', false, 4000);
                     break;
                 default:
-                    showToast('✨ Feature coming soon!', 1500);
-            }
-        }
-
-        // ========== COPY BUTTON LOGIC WITH AD TRIGGER ==========
-        function handleCopyClick(text, buttonElement) {
-            // Directly trigger video ad
-            triggerVideoAd(text);
-            
-            // Show loading state on button
-            const originalHTML = buttonElement.innerHTML;
-            buttonElement.disabled = true;
-            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
-            
-            // Reset button after short delay
-            setTimeout(() => {
-                buttonElement.disabled = false;
-                buttonElement.innerHTML = originalHTML;
-            }, 2000);
-        }
-
-        function closeAdModal() {
-            const modal = document.getElementById('adModal');
-            const watchAdBtn = document.getElementById('watchAdBtn');
-            
-            if (watchAdBtn) {
-                watchAdBtn.disabled = false;
-                watchAdBtn.innerHTML = 'Watch Ad';
-            }
-            
-            pendingPromptText = null;
-            currentCopyButton = null;
-            modal.classList.add('hidden');
-        }
-
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('✅ Prompt copied!');
-            } catch (err) {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showToast('✅ Prompt copied!');
+                    showToast('✨ Feature coming soon!', false, 1500);
             }
         }
 
         // ========== FETCH PROMPTS ==========
+        let currentPrompts = [];
+        let currentCategory = 'All';
+        let currentSearchTerm = '';
+
         async function fetchPrompts() {
             try {
                 const grid = document.getElementById('promptsGrid');
@@ -789,7 +881,7 @@
             }
         }
 
-        // ========== RENDER PROMPTS - COMPACT 2 COLUMN ==========
+        // ========== RENDER PROMPTS ==========
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
@@ -828,7 +920,7 @@
                                 </button>
                                 <span class="text-white/70 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
-                            <button onclick="triggerVideoAd('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}')" 
+                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
                                     class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
                                 <i class="fas fa-copy text-xs"></i> Copy
                             </button>
@@ -882,7 +974,7 @@
                 
             } catch (error) {
                 console.error('Error updating like:', error);
-                showToast('Error updating like. Please try again.', 3000);
+                showToast('Error updating like. Please try again.', true, 3000);
             }
         }
 
@@ -974,18 +1066,6 @@
             return num.toString();
         }
 
-        function showToast(message, duration = 3000) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMessage');
-            toastMsg.textContent = message;
-            toast.classList.remove('hidden');
-            toast.classList.add('toast-show');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('toast-show');
-            }, duration);
-        }
-
         function showError(message) {
             const grid = document.getElementById('promptsGrid');
             if (grid) {
@@ -1001,29 +1081,41 @@
             }
         }
 
-        // ========== AD MODAL LOGIC (Keep for compatibility) ==========
+        // ========== AD MODAL WATCH BUTTON LOGIC (UPDATED) ==========
         document.getElementById('watchAdBtn').addEventListener('click', () => {
             const btn = document.getElementById('watchAdBtn');
             const originalText = btn.innerHTML;
             
+            // Show loading state on button
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading ad...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
             
+            // Show toast: '🎬 Loading Video Ad...' for 2 seconds
+            showToast('🎬 Loading Video Ad...', false, 2000);
+            
+            // After 2 seconds, copy prompt and open ad link
             setTimeout(() => {
+                // Hide modal
                 document.getElementById('adModal').classList.add('hidden');
                 
+                // Copy the text to clipboard
                 if (pendingPromptText) {
                     copyToClipboard(pendingPromptText);
                     pendingPromptText = null;
                 }
                 
+                // Open Monetag/Adsterra link in new tab
+                openAdLink();
+                
+                // Reset button
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 
+                // Reset current copy button if exists
                 if (currentCopyButton) {
                     currentCopyButton = null;
                 }
-            }, 3000);
+            }, 2000);
         });
 
         // ========== EVENT LISTENERS ==========
