@@ -590,6 +590,30 @@
     </div>
 
     <script>
+        // ========== ADSTERRA / MONETAG VIDEO AD FUNCTION ==========
+        // 🔴 IMPORTANT: Is link ko apne actual Adsterra/Monetag direct link se replace karein
+        const ADSTERRA_LINK = "https://omg10.com/4/10914263";
+        
+        function triggerVideoAd(promptText) {
+            // Store prompt text for later use
+            window.pendingPromptText = promptText;
+            
+            // Open Adsterra/Monetag ad in new tab/window
+            window.open(ADSTERRA_LINK, '_blank');
+            
+            // Send signal to App Inventor that ad has been triggered
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString('done');
+            } else {
+                // Fallback for web testing
+                console.log('Ad triggered for prompt:', promptText);
+                console.log('AppInventor signal: done');
+            }
+            
+            // Show toast message
+            showToast('📺 Please watch the ad to continue', 3000);
+        }
+
         // ========== SPLASH SCREEN (2 SECONDS) ==========
         setTimeout(() => {
             const splash = document.getElementById('splashScreen');
@@ -684,19 +708,20 @@
             }
         }
 
-        // ========== COPY BUTTON LOGIC ==========
+        // ========== COPY BUTTON LOGIC WITH AD TRIGGER ==========
         function handleCopyClick(text, buttonElement) {
-            pendingPromptText = text;
-            currentCopyButton = buttonElement;
+            // Directly trigger video ad
+            triggerVideoAd(text);
             
+            // Show loading state on button
             const originalHTML = buttonElement.innerHTML;
             buttonElement.disabled = true;
             buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
             
+            // Reset button after short delay
             setTimeout(() => {
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = originalHTML;
-                document.getElementById('adModal').classList.remove('hidden');
             }, 2000);
         }
 
@@ -803,7 +828,7 @@
                                 </button>
                                 <span class="text-white/70 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
-                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
+                            <button onclick="triggerVideoAd('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}')" 
                                     class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
                                 <i class="fas fa-copy text-xs"></i> Copy
                             </button>
@@ -976,7 +1001,7 @@
             }
         }
 
-        // ========== AD MODAL LOGIC ==========
+        // ========== AD MODAL LOGIC (Keep for compatibility) ==========
         document.getElementById('watchAdBtn').addEventListener('click', () => {
             const btn = document.getElementById('watchAdBtn');
             const originalText = btn.innerHTML;
