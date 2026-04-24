@@ -39,7 +39,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             overflow-x: hidden;
-            padding-bottom: 90px; /* Space for banner ad */
+            padding-bottom: 90px;
         }
         
         /* Glassmorphism Effects */
@@ -66,7 +66,6 @@
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
         
-        /* Sidebar Glassmorphism */
         .sidebar-glass {
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(20px);
@@ -83,19 +82,16 @@
             transform: translateX(5px);
         }
         
-        /* Footer Glassmorphism */
         .footer-glass {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.15);
         }
         
-        /* Overlay */
         .overlay {
             transition: all 0.3s ease;
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -110,11 +106,6 @@
             border-radius: 10px;
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(139, 92, 246, 0.8);
-        }
-        
-        /* Hide scrollbar for categories on mobile but keep functionality */
         .categories-scroll {
             scrollbar-width: thin;
             scrollbar-color: rgba(139, 92, 246, 0.6) rgba(255, 255, 255, 0.1);
@@ -125,17 +116,6 @@
             height: 4px;
         }
         
-        .categories-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .categories-scroll::-webkit-scrollbar-thumb {
-            background: rgba(139, 92, 246, 0.6);
-            border-radius: 10px;
-        }
-        
-        /* Skeleton Loading Animation */
         .skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
             background-size: 200% 100%;
@@ -148,7 +128,6 @@
             100% { background-position: -200% 0; }
         }
         
-        /* Line Clamping */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -156,7 +135,6 @@
             overflow: hidden;
         }
         
-        /* Toast Animation */
         .toast-show {
             animation: toastSlide 0.3s ease-out forwards;
         }
@@ -172,7 +150,6 @@
             }
         }
         
-        /* Modal Animation */
         .modal-animate {
             animation: modalPop 0.3s ease-out forwards;
         }
@@ -188,13 +165,11 @@
             }
         }
         
-        /* Menu Button Hover */
         .menu-btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
         
-        /* Like Button Animation */
         .like-button {
             cursor: pointer;
             transition: transform 0.2s ease;
@@ -204,7 +179,6 @@
             transform: scale(0.9);
         }
         
-        /* Image Modal Styles */
         .image-modal {
             position: fixed;
             top: 0;
@@ -249,12 +223,6 @@
             justify-content: center;
         }
         
-        .image-modal-close:hover {
-            transform: scale(1.1);
-            background: rgba(0,0,0,0.8);
-        }
-        
-        /* Aspect Ratio for Images */
         .image-container {
             aspect-ratio: 2 / 3;
             position: relative;
@@ -273,7 +241,6 @@
             transform: scale(1.05);
         }
         
-        /* Compact Card Styles */
         .compact-title {
             font-size: 0.9rem;
             line-height: 1.2rem;
@@ -286,7 +253,6 @@
             color: rgba(255,255,255,0.6);
         }
         
-        /* Fixed Banner Ad Container */
         .banner-ad-container {
             position: fixed;
             bottom: 0;
@@ -312,7 +278,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
         
-        /* Ad banner placeholder - replace with actual ad code */
         .ad-placeholder {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -324,38 +289,16 @@
             width: 100%;
         }
         
-        /* Mobile Optimizations */
         @media (max-width: 768px) {
-            .container {
-                padding-left: 12px;
-                padding-right: 12px;
-            }
-            .glass-card {
-                border-radius: 16px;
-            }
-            .image-modal-close {
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                font-size: 30px;
-            }
-            .compact-title {
-                font-size: 0.8rem;
-            }
-            .compact-prompt {
-                font-size: 0.65rem;
-            }
-            body {
-                padding-bottom: 80px;
-            }
-            .banner-ad-container {
-                min-height: 70px;
-                padding: 6px 10px;
-            }
+            .container { padding-left: 12px; padding-right: 12px; }
+            .glass-card { border-radius: 16px; }
+            .image-modal-close { top: 15px; right: 15px; width: 40px; height: 40px; font-size: 30px; }
+            .compact-title { font-size: 0.8rem; }
+            .compact-prompt { font-size: 0.65rem; }
+            body { padding-bottom: 80px; }
+            .banner-ad-container { min-height: 70px; padding: 6px 10px; }
         }
         
-        /* Splash Screen */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -398,15 +341,35 @@
             color: white;
             letter-spacing: 2px;
         }
+        
+        /* Monetag Vignette Modal Styles */
+        .monetag-modal-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+        }
+        
+        .timer-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+        }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
     <div id="splashScreen" class="splash-screen">
         <div class="splash-content">
-            <div class="splash-icon">
-                <i class="fas fa-magic"></i>
-            </div>
+            <div class="splash-icon"><i class="fas fa-magic"></i></div>
             <div class="splash-title">Prompt Studio</div>
         </div>
     </div>
@@ -423,7 +386,6 @@
     <!-- Glassmorphism Sidebar Menu -->
     <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-80 sidebar-glass z-50 transform -translate-x-full transition-transform duration-300 ease-out shadow-2xl">
         <div class="p-6">
-            <!-- Sidebar Header -->
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -438,46 +400,29 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
-            <!-- Menu Items -->
             <div class="space-y-2">
                 <div onclick="handleMenuClick('follow')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fab fa-instagram text-2xl w-8"></i>
-                    <span class="font-medium">Follow Me</span>
+                    <i class="fab fa-instagram text-2xl w-8"></i><span class="font-medium">Follow Me</span>
                 </div>
-                
                 <div onclick="handleMenuClick('howto')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-question-circle text-2xl w-8"></i>
-                    <span class="font-medium">How to Use</span>
+                    <i class="fas fa-question-circle text-2xl w-8"></i><span class="font-medium">How to Use</span>
                 </div>
-                
                 <div onclick="handleMenuClick('share')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-share-alt text-2xl w-8"></i>
-                    <span class="font-medium">Share App</span>
+                    <i class="fas fa-share-alt text-2xl w-8"></i><span class="font-medium">Share App</span>
                 </div>
-                
                 <div onclick="handleMenuClick('rate')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-star text-2xl w-8"></i>
-                    <span class="font-medium">Rate Us</span>
+                    <i class="fas fa-star text-2xl w-8"></i><span class="font-medium">Rate Us</span>
                 </div>
-                
                 <div onclick="handleMenuClick('contact')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-envelope text-2xl w-8"></i>
-                    <span class="font-medium">Contact Us</span>
+                    <i class="fas fa-envelope text-2xl w-8"></i><span class="font-medium">Contact Us</span>
                 </div>
-                
                 <div onclick="handleMenuClick('developer')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-code text-2xl w-8"></i>
-                    <span class="font-medium">Developer Info</span>
+                    <i class="fas fa-code text-2xl w-8"></i><span class="font-medium">Developer Info</span>
                 </div>
-                
                 <div onclick="handleMenuClick('privacy')" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-xl text-white/90 hover:text-white">
-                    <i class="fas fa-shield-alt text-2xl w-8"></i>
-                    <span class="font-medium">Privacy Policy</span>
+                    <i class="fas fa-shield-alt text-2xl w-8"></i><span class="font-medium">Privacy Policy</span>
                 </div>
             </div>
-
-            <!-- Sidebar Footer -->
             <div class="absolute bottom-6 left-6 right-6 pt-4 border-t border-white/20">
                 <p class="text-white/40 text-xs text-center">© 2025 Prompt Studio<br>Version 1.0.1-Stable</p>
             </div>
@@ -491,13 +436,10 @@
                 <button onclick="openSidebar()" class="menu-btn w-9 h-9 glass flex items-center justify-center rounded-full transition-all">
                     <i class="fas fa-bars text-white text-lg"></i>
                 </button>
-                
                 <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
                     <i class="fas fa-magic text-white text-base"></i>
                 </div>
-                <div>
-                    <h1 class="text-white font-bold text-base tracking-tight">Prompt Studio</h1>
-                </div>
+                <div><h1 class="text-white font-bold text-base tracking-tight">Prompt Studio</h1></div>
             </div>
             <div class="flex items-center gap-2">
                 <div class="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
@@ -510,7 +452,6 @@
 
     <!-- Main Content -->
     <main id="mainContent">
-        <!-- Compact Hero Section -->
         <section class="pt-16 pb-2 px-4">
             <div class="max-w-6xl mx-auto text-center">
                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-3 py-1 mb-2">
@@ -523,7 +464,6 @@
             </div>
         </section>
 
-        <!-- Search Bar -->
         <section class="px-4 mb-2">
             <div class="max-w-6xl mx-auto">
                 <div class="relative">
@@ -534,14 +474,12 @@
             </div>
         </section>
 
-        <!-- Horizontal Categories with Scroll -->
         <section class="px-4 mb-3">
             <div class="max-w-6xl mx-auto">
                 <div class="flex gap-2 overflow-x-auto pb-2 categories-scroll" id="categoriesContainer"></div>
             </div>
         </section>
 
-        <!-- Prompts Grid - 2 Column Layout -->
         <section class="px-4 pb-20">
             <div class="max-w-6xl mx-auto">
                 <div class="grid grid-cols-2 gap-3 md:gap-4" id="promptsGrid">
@@ -556,7 +494,7 @@
         </section>
     </main>
 
-    <!-- Premium Glassmorphism Footer -->
+    <!-- Footer -->
     <footer class="footer-glass mt-8">
         <div class="max-w-6xl mx-auto px-4 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center gap-3 mb-3">
@@ -565,89 +503,65 @@
                         <div class="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
                             <i class="fas fa-magic text-white text-xs"></i>
                         </div>
-                        <div>
-                            <h3 class="text-white font-bold text-sm">Prompt Studio</h3>
-                            <p class="text-white/50 text-xs">Elevate your creativity</p>
-                        </div>
+                        <div><h3 class="text-white font-bold text-sm">Prompt Studio</h3><p class="text-white/50 text-xs">Elevate your creativity</p></div>
                     </div>
                 </div>
-
                 <div class="flex gap-4">
                     <a href="#" onclick="handleMenuClick('privacy')" class="text-white/60 hover:text-white text-xs transition-colors">Privacy</a>
                     <a href="#" onclick="showToast('📜 Terms of Service: Use responsibly', 3000)" class="text-white/60 hover:text-white text-xs transition-colors">Terms</a>
                     <a href="#" onclick="handleMenuClick('contact')" class="text-white/60 hover:text-white text-xs transition-colors">Contact</a>
                 </div>
-
                 <div class="flex gap-3">
-                    <a href="#" onclick="window.open('https://instagram.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-instagram text-white text-xs"></i>
-                    </a>
-                    <a href="#" onclick="window.open('https://youtube.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-youtube text-white text-xs"></i>
-                    </a>
-                    <a href="#" onclick="window.open('https://github.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20">
-                        <i class="fab fa-github text-white text-xs"></i>
-                    </a>
+                    <a href="#" onclick="window.open('https://instagram.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20"><i class="fab fa-instagram text-white text-xs"></i></a>
+                    <a href="#" onclick="window.open('https://youtube.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20"><i class="fab fa-youtube text-white text-xs"></i></a>
+                    <a href="#" onclick="window.open('https://github.com', '_blank')" class="w-7 h-7 glass flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-white/20"><i class="fab fa-github text-white text-xs"></i></a>
                 </div>
             </div>
-
             <div class="border-t border-white/10 my-3"></div>
-
             <div class="flex flex-col md:flex-row justify-between items-center gap-2">
                 <p class="text-white/40 text-xs text-center">© 2025 Prompt Studio. All rights reserved.</p>
-                <div class="flex items-center gap-2">
-                    <span class="text-white/30 text-xs">v1.0.1-Stable</span>
-                    <span class="text-white/20 text-xs">•</span>
-                    <span class="text-white/30 text-xs">Built with ❤️</span>
-                </div>
+                <div class="flex items-center gap-2"><span class="text-white/30 text-xs">v1.0.1-Stable</span><span class="text-white/20 text-xs">•</span><span class="text-white/30 text-xs">Built with ❤️</span></div>
             </div>
         </div>
     </footer>
 
-    <!-- Fixed Banner Ad Container -->
+    <!-- Banner Ad Container -->
     <div id="bannerAdContainer" class="banner-ad-container">
         <div class="ad-space">
-            <!-- 🔴 YAHAN APNA BANNER AD CODE LAGAYEIN (Monetag / Adsterra) -->
             <div class="ad-placeholder" id="bannerAdPlaceholder">
-    <script>
-  atOptions = {
-    'key' : 'd2758be52ff6228d6b1e2e661748d1ac',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/d2758be52ff6228d6b1e2e661748d1ac/invoke.js"></script>
-</div>
-            <!-- Banner Ad Code yahan paste karein -->
+                <script>
+                    atOptions = { 'key' : 'd2758be52ff6228d6b1e2e661748d1ac', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+                </script>
+                <script src="https://www.highperformanceformat.com/d2758be52ff6228d6b1e2e661748d1ac/invoke.js"></script>
+            </div>
         </div>
     </div>
 
-    <!-- Ad Modal with Cancel Button -->
-    <div id="adModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center hidden">
-        <div class="glass-card p-6 max-w-md mx-4 modal-animate">
-            <div class="text-center">
-                <div class="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-ad text-white text-3xl"></i>
+    <!-- ========== UPDATED: Monetag Vignette Modal ========== -->
+    <div id="adModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center hidden">
+        <div class="glass-card p-6 max-w-md mx-4 w-full modal-animate">
+            <div class="text-center monetag-modal-content">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-video text-white text-3xl"></i>
                 </div>
-                <h3 class="text-white text-2xl font-bold mb-2">Support Us</h3>
-                <p class="text-white/70 mb-4">Please watch this ad to copy the prompt</p>
-                <div class="bg-white/10 rounded-xl p-4 mb-4">
-                    <i class="fas fa-crown text-yellow-400 text-4xl mb-2 block"></i>
-                    <p class="text-white font-semibold">Get Premium Access</p>
-                </div>
-                <button id="watchAdBtn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all">
-                    Watch Ad
-                </button>
-                <button onclick="closeAdModal()" class="mt-4 text-gray-400 hover:text-white text-sm transition-colors">
-                    Cancel
+                <h3 class="text-white text-2xl font-bold mb-2">Watch Ad to Copy</h3>
+                <p class="text-white/70 mb-4">Please watch the ad below to unlock copy</p>
+                
+                <!-- Timer Display -->
+                <div id="adTimer" class="timer-text text-4xl font-bold text-yellow-400 mb-4">10s</div>
+                
+                <!-- Monetag Vignette Script Container -->
+                <div id="monetagScriptContainer" class="mb-4"></div>
+                
+                <!-- Close Button (Disabled until timer finishes) -->
+                <button id="closeAdBtn" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold py-3 rounded-xl transition-all close-btn-disabled" disabled>
+                    Please wait 10 seconds...
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ========== NEW: EXIT CONFIRMATION MODAL ========== -->
+    <!-- Exit Modal -->
     <div id="exitModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[150] flex items-center justify-center hidden">
         <div class="glass-card p-6 max-w-md mx-4 modal-animate">
             <div class="text-center">
@@ -655,20 +569,16 @@
                     <i class="fas fa-sign-out-alt text-white text-3xl"></i>
                 </div>
                 <h3 class="text-white text-2xl font-bold mb-2">Exit App?</h3>
-                <p class="text-white/70 mb-6">Are you sure you want to exit? Your progress will be lost.</p>
+                <p class="text-white/70 mb-6">Are you sure you want to exit?</p>
                 <div class="flex gap-3">
-                    <button id="confirmExitBtn" class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-xl transition-all">
-                        Exit
-                    </button>
-                    <button id="cancelExitBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition-all">
-                        Cancel
-                    </button>
+                    <button id="confirmExitBtn" class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-xl transition-all">Exit</button>
+                    <button id="cancelExitBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition-all">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast for loading messages -->
+    <!-- Toast -->
     <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-[200] hidden">
         <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl">
             <i class="fas fa-spinner fa-spin"></i>
@@ -677,14 +587,15 @@
     </div>
 
     <script>
-        // ========== ADSTERRA / MONETAG CONFIGURATION ==========
-        // 🔴 Is link ko apne actual Monetag/Adsterra direct link se replace karein
-        const ADSTERRA_LINK = "https://omg10.com/4/10914263";
-        
+        // ========== GLOBAL VARIABLES ==========
         let pendingPromptText = null;
         let currentCopyButton = null;
+        let adTimerInterval = null;
+        let remainingSeconds = 10;
+        let isAdCompleted = false;
+        let monetagScriptLoaded = false;
 
-        // ========== TOAST FUNCTION (Updated for loading states) ==========
+        // ========== TOAST FUNCTIONS ==========
         function showToast(message, isError = false, duration = 2000) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMessage');
@@ -702,7 +613,6 @@
             
             toast.classList.remove('hidden');
             toast.classList.add('toast-show');
-            
             setTimeout(() => {
                 toast.classList.add('hidden');
                 toast.classList.remove('toast-show');
@@ -723,44 +633,161 @@
             }, duration);
         }
 
-        // ========== UPDATED COPY BUTTON LOGIC ==========
+        // ========== LOAD MONETAG VIGNETTE SCRIPT ==========
+        function loadMonetagVignette() {
+            if (monetagScriptLoaded) return;
+            
+            const container = document.getElementById('monetagScriptContainer');
+            if (!container) return;
+            
+            // Clear previous content
+            container.innerHTML = '';
+            
+            // Create and inject Monetag Vignette script
+            const script = document.createElement('script');
+            script.innerHTML = `(function(s){s.dataset.zone='10920892',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
+            container.appendChild(script);
+            
+            monetagScriptLoaded = true;
+            console.log('Monetag Vignette script loaded');
+        }
+
+        // ========== START TIMER ==========
+        function startAdTimer() {
+            remainingSeconds = 10;
+            isAdCompleted = false;
+            const timerDisplay = document.getElementById('adTimer');
+            const closeBtn = document.getElementById('closeAdBtn');
+            
+            // Reset close button state
+            closeBtn.disabled = true;
+            closeBtn.innerHTML = 'Please wait 10 seconds...';
+            closeBtn.classList.add('close-btn-disabled');
+            
+            // Clear any existing interval
+            if (adTimerInterval) clearInterval(adTimerInterval);
+            
+            // Start new timer
+            adTimerInterval = setInterval(() => {
+                remainingSeconds--;
+                
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${remainingSeconds}s`;
+                }
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(adTimerInterval);
+                    adTimerInterval = null;
+                    isAdCompleted = true;
+                    
+                    // Enable close button
+                    closeBtn.disabled = false;
+                    closeBtn.innerHTML = '✓ Close & Copy Prompt';
+                    closeBtn.classList.remove('close-btn-disabled');
+                    closeBtn.classList.add('bg-gradient-to-r', 'from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+                    
+                    console.log('Timer completed, ad ready to close');
+                }
+            }, 1000);
+        }
+
+        // ========== STOP TIMER ==========
+        function stopAdTimer() {
+            if (adTimerInterval) {
+                clearInterval(adTimerInterval);
+                adTimerInterval = null;
+            }
+        }
+
+        // ========== COPY BUTTON LOGIC ==========
         function handleCopyClick(text, buttonElement) {
-            // Store prompt text
             pendingPromptText = text;
             currentCopyButton = buttonElement;
             
-            // Show loading state on button
             const originalHTML = buttonElement.innerHTML;
             buttonElement.disabled = true;
             buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
             
-            // Show toast: '⏳ Processing...' for 2 seconds
-            showToast('⏳ Processing...', false, 2000);
+            showToast('⏳ Loading ad...', false, 1500);
             
-            // After 2 seconds, show ad modal
             setTimeout(() => {
-                // Reset button
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = originalHTML;
                 
-                // Show ad modal
-                document.getElementById('adModal').classList.remove('hidden');
-            }, 2000);
+                // Show ad modal and load Monetag script
+                const adModal = document.getElementById('adModal');
+                adModal.classList.remove('hidden');
+                
+                // Load Monetag Vignette script
+                loadMonetagVignette();
+                
+                // Start 10-second timer
+                startAdTimer();
+            }, 1500);
         }
 
-        // ========== CLOSE AD MODAL ==========
-        function closeAdModal() {
-            const modal = document.getElementById('adModal');
-            const watchAdBtn = document.getElementById('watchAdBtn');
-            
-            if (watchAdBtn) {
-                watchAdBtn.disabled = false;
-                watchAdBtn.innerHTML = 'Watch Ad';
+        // ========== CLOSE AD MODAL AND COPY ==========
+        function closeAdModalAndCopy() {
+            if (!isAdCompleted) {
+                showToast('Please wait for the ad to complete!', true, 2000);
+                return;
             }
+            
+            // Copy the prompt text
+            if (pendingPromptText) {
+                copyToClipboard(pendingPromptText);
+                pendingPromptText = null;
+            }
+            
+            // Stop timer
+            stopAdTimer();
+            
+            // Reset timer display
+            const timerDisplay = document.getElementById('adTimer');
+            if (timerDisplay) timerDisplay.textContent = '10s';
+            
+            // Hide modal
+            const modal = document.getElementById('adModal');
+            modal.classList.add('hidden');
+            
+            // Reset close button
+            const closeBtn = document.getElementById('closeAdBtn');
+            closeBtn.disabled = true;
+            closeBtn.innerHTML = 'Please wait 10 seconds...';
+            closeBtn.classList.add('close-btn-disabled');
+            closeBtn.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-emerald-600');
+            
+            // Reset flag
+            isAdCompleted = false;
+            
+            if (currentCopyButton) {
+                currentCopyButton = null;
+            }
+        }
+
+        // ========== CLOSE AD MODAL WITHOUT COPY (Cancel) ==========
+        function closeAdModal() {
+            if (!isAdCompleted && !confirm('Ad not completed yet. Cancel anyway?')) {
+                return;
+            }
+            
+            stopAdTimer();
+            
+            const timerDisplay = document.getElementById('adTimer');
+            if (timerDisplay) timerDisplay.textContent = '10s';
+            
+            const modal = document.getElementById('adModal');
+            modal.classList.add('hidden');
+            
+            const closeBtn = document.getElementById('closeAdBtn');
+            closeBtn.disabled = true;
+            closeBtn.innerHTML = 'Please wait 10 seconds...';
+            closeBtn.classList.add('close-btn-disabled');
+            closeBtn.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-emerald-600');
             
             pendingPromptText = null;
             currentCopyButton = null;
-            modal.classList.add('hidden');
+            isAdCompleted = false;
         }
 
         // ========== COPY TO CLIPBOARD ==========
@@ -781,127 +808,35 @@
             }
         }
 
-        // ========== OPEN ADSTERRA LINK ==========
-        function openAdLink() {
-            window.open(ADSTERRA_LINK, '_blank');
-            // Send signal to App Inventor
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString('done');
-            }
-            console.log('Ad link opened:', ADSTERRA_LINK);
-        }
-
         // ========== SPLASH SCREEN ==========
         setTimeout(() => {
             const splash = document.getElementById('splashScreen');
             splash.classList.add('hide');
-            setTimeout(() => {
-                splash.style.display = 'none';
-            }, 500);
+            setTimeout(() => { splash.style.display = 'none'; }, 500);
         }, 2000);
 
-        // ========== CHECK IF ANY MODAL IS OPEN ==========
+        // ========== MODAL FUNCTIONS ==========
         function isAnyModalOpen() {
             const imageModal = document.getElementById('imageModal');
             const adModal = document.getElementById('adModal');
             const sidebar = document.getElementById('sidebarMenu');
-            
             return (imageModal && imageModal.classList.contains('active')) ||
                    (adModal && !adModal.classList.contains('hidden')) ||
                    (sidebar && !sidebar.classList.contains('-translate-x-full'));
         }
 
-        // ========== CLOSE ALL MODALS ==========
         function closeAllModals() {
             closeImageModal();
             closeAdModal();
             closeSidebar();
         }
 
-        // ========== EXIT MODAL FUNCTIONS ==========
-        function showExitModal() {
-            document.getElementById('exitModal').classList.remove('hidden');
-        }
-        
-        function hideExitModal() {
-            document.getElementById('exitModal').classList.add('hidden');
-        }
-        
-        function exitApp() {
-            // Try to close the app (works in WebView/App Inventor)
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString('exit');
-            } else {
-                // For browser testing
-                window.close();
-                // Fallback: go back
-                window.history.back();
-            }
-            hideExitModal();
-        }
-
-        // ========== ADVANCED BACK BUTTON HANDLING ==========
-        // Push initial state to history
-        history.pushState({ page: 'home' }, null, null);
-        
-        window.onpopstate = function(event) {
-            // Check if any modal is open
-            if (isAnyModalOpen()) {
-                // Close all modals instead of exiting
-                closeAllModals();
-                // Push state again to prevent exit
-                history.pushState({ page: 'home' }, null, null);
-                showSuccessToast('Modal closed', 1500);
-            } else {
-                // No modal open, show exit confirmation
-                showExitModal();
-                // Push state again to keep app alive
-                history.pushState({ page: 'home' }, null, null);
-            }
-        };
-
-        // ========== SWIPE TO REFRESH (Pull-to-Refresh Detection) ==========
-        let touchStartY = 0;
-        let isRefreshing = false;
-        const REFRESH_THRESHOLD = 100;
-        
-        document.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', (e) => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const touchCurrentY = e.touches[0].clientY;
-            const swipeDistance = touchCurrentY - touchStartY;
-            
-            // Only trigger if at top of page and swiping down
-            if (scrollTop === 0 && swipeDistance > REFRESH_THRESHOLD && !isRefreshing) {
-                e.preventDefault();
-                refreshPage();
-            }
-        }, { passive: false });
-        
-        function refreshPage() {
-            isRefreshing = true;
-            showToast('🔄 Refreshing...', false, 1500);
-            
-            // Reload prompts data
-            fetchPrompts();
-            
-            setTimeout(() => {
-                isRefreshing = false;
-                showSuccessToast('✓ Page refreshed!', 1500);
-            }, 2000);
-        }
-
-        // ========== IMAGE MODAL FUNCTIONS ==========
         function openImageModal(imageUrl) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImage');
             modal.classList.add('active');
             modalImg.src = imageUrl;
             document.body.style.overflow = 'hidden';
-            // Push state for back button handling
             history.pushState({ modal: 'image' }, null, null);
         }
 
@@ -911,7 +846,6 @@
             document.body.style.overflow = '';
         }
 
-        // ========== SIDEBAR FUNCTIONS ==========
         function openSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
             const overlay = document.getElementById('sidebarOverlay');
@@ -931,214 +865,141 @@
             document.body.style.overflow = '';
         }
 
+        function showExitModal() { document.getElementById('exitModal').classList.remove('hidden'); }
+        function hideExitModal() { document.getElementById('exitModal').classList.add('hidden'); }
+        function exitApp() {
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString('exit');
+            } else { window.close(); window.history.back(); }
+            hideExitModal();
+        }
+
+        // ========== BACK BUTTON HANDLING ==========
+        history.pushState({ page: 'home' }, null, null);
+        window.onpopstate = function(event) {
+            if (isAnyModalOpen()) {
+                closeAllModals();
+                history.pushState({ page: 'home' }, null, null);
+                showSuccessToast('Modal closed', 1500);
+            } else {
+                showExitModal();
+                history.pushState({ page: 'home' }, null, null);
+            }
+        };
+
+        // ========== SWIPE TO REFRESH ==========
+        let touchStartY = 0;
+        let isRefreshing = false;
+        const REFRESH_THRESHOLD = 100;
+        
+        document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchmove', (e) => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const swipeDistance = e.touches[0].clientY - touchStartY;
+            if (scrollTop === 0 && swipeDistance > REFRESH_THRESHOLD && !isRefreshing) {
+                e.preventDefault();
+                refreshPage();
+            }
+        }, { passive: false });
+        
+        function refreshPage() {
+            isRefreshing = true;
+            showToast('🔄 Refreshing...', false, 1500);
+            fetchPrompts();
+            setTimeout(() => { isRefreshing = false; showSuccessToast('✓ Page refreshed!', 1500); }, 2000);
+        }
+
         // ========== MENU HANDLER ==========
         function handleMenuClick(action) {
             closeSidebar();
-            
             switch(action) {
-                case 'follow':
-                    showSuccessToast('📱 Follow us on Instagram: @promptstudio', 3000);
-                    setTimeout(() => window.open('https://instagram.com', '_blank'), 1500);
-                    break;
-                case 'howto':
-                    showToast('📖 How to Use: 1. Browse prompts 2. Click Copy 3. Watch ad 4. Paste in Midjourney/DALL-E', false, 4000);
-                    break;
-                case 'share':
-                    if (navigator.share) {
-                        navigator.share({ title: 'Prompt Studio', text: 'Check out this amazing AI Prompt collection!', url: window.location.href })
-                            .catch(() => showToast('✨ Share cancelled', false, 1500));
-                    } else {
-                        navigator.clipboard.writeText(window.location.href);
-                        showSuccessToast('🔗 Link copied to clipboard!', 2000);
-                    }
-                    break;
-                case 'rate':
-                    showToast('⭐ Rate us 5 stars on the app store!', false, 2000);
-                    break;
-                case 'contact':
-                    showToast('📧 Contact: support@promptstudio.com', false, 3000);
-                    break;
-                case 'developer':
-                    showToast('👨‍💻 Developed by Prompt Studio Team\nVersion 1.0.1-Stable', false, 4000);
-                    break;
-                case 'privacy':
-                    showToast('🔒 Privacy Policy: We don\'t store your personal data. Prompts are saved in MongoDB Atlas.', false, 4000);
-                    break;
-                default:
-                    showToast('✨ Feature coming soon!', false, 1500);
+                case 'follow': showSuccessToast('📱 Follow us on Instagram: @promptstudio', 3000); setTimeout(() => window.open('https://instagram.com', '_blank'), 1500); break;
+                case 'howto': showToast('📖 How to Use: 1. Browse prompts 2. Click Copy 3. Watch ad 4. Paste in Midjourney/DALL-E', false, 4000); break;
+                case 'share': if (navigator.share) { navigator.share({ title: 'Prompt Studio', text: 'Check out this amazing AI Prompt collection!', url: window.location.href }).catch(() => showToast('✨ Share cancelled', false, 1500)); } else { navigator.clipboard.writeText(window.location.href); showSuccessToast('🔗 Link copied to clipboard!', 2000); } break;
+                case 'rate': showToast('⭐ Rate us 5 stars on the app store!', false, 2000); break;
+                case 'contact': showToast('📧 Contact: support@promptstudio.com', false, 3000); break;
+                case 'developer': showToast('👨‍💻 Developed by Prompt Studio Team\nVersion 1.0.1-Stable', false, 4000); break;
+                case 'privacy': showToast('🔒 Privacy Policy: We don\'t store your personal data.', false, 4000); break;
+                default: showToast('✨ Feature coming soon!', false, 1500);
             }
         }
 
         // ========== FETCH PROMPTS ==========
-        let currentPrompts = [];
-        let currentCategory = 'All';
-        let currentSearchTerm = '';
+        let currentPrompts = [], currentCategory = 'All', currentSearchTerm = '';
 
         async function fetchPrompts() {
             try {
                 const grid = document.getElementById('promptsGrid');
-                if (grid) {
-                    grid.innerHTML = `<div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>`;
-                }
-                
+                if (grid) grid.innerHTML = `<div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>`;
                 const response = await fetch('/api/prompts');
                 const data = await response.json();
-                
                 if (!response.ok) throw new Error(data.error || 'Failed to fetch prompts');
-                
                 let prompts = [];
                 if (data.prompts) prompts = data.prompts;
                 else if (Array.isArray(data)) prompts = data;
-                
-                currentPrompts = prompts.map(prompt => ({
-                    ...prompt,
-                    isLiked: false
-                }));
-                
+                currentPrompts = prompts.map(prompt => ({ ...prompt, isLiked: false }));
                 filterPrompts();
                 await renderCategories();
-                
                 const countElem = document.getElementById('promptCount');
                 if (countElem) countElem.textContent = `${currentPrompts.length}`;
-                
                 console.log(`✅ Loaded ${currentPrompts.length} prompts`);
-            } catch (error) {
-                console.error('Error fetching prompts:', error);
-                showError('Failed to load prompts. Please check your connection.');
-            }
+            } catch (error) { console.error('Error fetching prompts:', error); showError('Failed to load prompts.'); }
         }
 
-        // ========== RENDER PROMPTS ==========
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
-            
-            if (!prompts || prompts.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-2 text-center py-12">
-                        <i class="fas fa-inbox text-white/40 text-6xl mb-4"></i>
-                        <p class="text-white/60 text-lg">No prompts found</p>
-                    </div>
-                `;
-                return;
-            }
-            
+            if (!prompts || prompts.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-inbox text-white/40 text-6xl mb-4"></i><p class="text-white/60 text-lg">No prompts found</p></div>`; return; }
             grid.innerHTML = prompts.map(prompt => `
                 <div class="glass-card transition-all duration-300 animate-fade-in" data-prompt-id="${prompt._id}">
                     <div class="image-container" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/600'}')">
-                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" 
-                             alt="${escapeHtml(prompt.title)}" 
-                             loading="lazy"
-                             onerror="this.src='https://picsum.photos/400/600'">
-                        <div class="absolute top-2 right-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
-                            <i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}
-                        </div>
-                        <div class="absolute bottom-2 left-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
-                            ${escapeHtml(prompt.category || 'General')}
-                        </div>
+                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" alt="${escapeHtml(prompt.title)}" loading="lazy" onerror="this.src='https://picsum.photos/400/600'">
+                        <div class="absolute top-2 right-2 glass px-1.5 py-0.5 rounded-full text-xs text-white"><i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}</div>
+                        <div class="absolute bottom-2 left-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">${escapeHtml(prompt.category || 'General')}</div>
                     </div>
                     <div class="p-2">
                         <h3 class="text-white font-semibold compact-title mb-1 line-clamp-1">${escapeHtml(prompt.title)}</h3>
                         <p class="compact-prompt mb-2 line-clamp-2">${escapeHtml(prompt.prompt || 'No prompt available')}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}">
-                                    <i class="fas fa-heart ${prompt.isLiked ? 'text-red-500' : 'text-white/60'} text-xs"></i>
-                                </button>
+                                <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}"><i class="fas fa-heart ${prompt.isLiked ? 'text-red-500' : 'text-white/60'} text-xs"></i></button>
                                 <span class="text-white/70 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
-                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
-                                    class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
-                                <i class="fas fa-copy text-xs"></i> Copy
-                            </button>
+                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1"><i class="fas fa-copy text-xs"></i> Copy</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // ========== HANDLE LIKE ==========
         async function handleLike(id) {
             try {
                 const promptIndex = currentPrompts.findIndex(p => p._id === id);
                 if (promptIndex === -1) return;
-                
                 const wasLiked = currentPrompts[promptIndex].isLiked;
-                
-                if (wasLiked) {
-                    currentPrompts[promptIndex].likes = (currentPrompts[promptIndex].likes || 0) - 1;
-                    currentPrompts[promptIndex].isLiked = false;
-                } else {
-                    currentPrompts[promptIndex].likes = (currentPrompts[promptIndex].likes || 0) + 1;
-                    currentPrompts[promptIndex].isLiked = true;
-                }
-                
+                if (wasLiked) { currentPrompts[promptIndex].likes--; currentPrompts[promptIndex].isLiked = false; } 
+                else { currentPrompts[promptIndex].likes++; currentPrompts[promptIndex].isLiked = true; }
                 updateLikeUI(id, currentPrompts[promptIndex].likes, currentPrompts[promptIndex].isLiked);
-                
-                const response = await fetch('/api/prompt/like', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
-                });
-                
-                if (!response.ok) {
-                    if (wasLiked) {
-                        currentPrompts[promptIndex].likes = (currentPrompts[promptIndex].likes || 0) + 1;
-                        currentPrompts[promptIndex].isLiked = true;
-                    } else {
-                        currentPrompts[promptIndex].likes = (currentPrompts[promptIndex].likes || 0) - 1;
-                        currentPrompts[promptIndex].isLiked = false;
-                    }
-                    updateLikeUI(id, currentPrompts[promptIndex].likes, currentPrompts[promptIndex].isLiked);
-                    throw new Error('Failed to update like');
-                }
-                
-                const data = await response.json();
-                if (data.success && data.likes !== undefined) {
-                    currentPrompts[promptIndex].likes = data.likes;
-                    updateLikeUI(id, data.likes, currentPrompts[promptIndex].isLiked);
-                }
-                
-            } catch (error) {
-                console.error('Error updating like:', error);
-                showToast('Error updating like. Please try again.', true, 3000);
-            }
+                const response = await fetch('/api/prompt/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
+                if (!response.ok) throw new Error('Failed to update like');
+            } catch (error) { console.error('Error updating like:', error); showToast('Error updating like.', true, 3000); }
         }
 
         function updateLikeUI(id, likes, isLiked) {
             const likeCountSpan = document.querySelector(`.like-count[data-id="${id}"]`);
             if (likeCountSpan) likeCountSpan.textContent = formatNumber(likes);
-            
             const likeButton = document.querySelector(`.like-button[data-id="${id}"] i`);
             if (likeButton) {
-                if (isLiked) {
-                    likeButton.classList.remove('text-white/60');
-                    likeButton.classList.add('text-red-500');
-                } else {
-                    likeButton.classList.remove('text-red-500');
-                    likeButton.classList.add('text-white/60');
-                }
+                if (isLiked) { likeButton.classList.remove('text-white/60'); likeButton.classList.add('text-red-500'); } 
+                else { likeButton.classList.remove('text-red-500'); likeButton.classList.add('text-white/60'); }
             }
         }
 
-        // ========== FILTER LOGIC ==========
         function filterPrompts() {
             let filtered = [...currentPrompts];
-            
-            if (currentCategory !== 'All') {
-                filtered = filtered.filter(p => p.category === currentCategory);
-            }
-            
-            if (currentSearchTerm.trim()) {
-                const searchLower = currentSearchTerm.toLowerCase();
-                filtered = filtered.filter(p => 
-                    p.title.toLowerCase().includes(searchLower) ||
-                    (p.prompt || '').toLowerCase().includes(searchLower)
-                );
-            }
-            
+            if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
+            if (currentSearchTerm.trim()) { const searchLower = currentSearchTerm.toLowerCase(); filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.prompt || '').toLowerCase().includes(searchLower)); }
             renderPrompts(filtered);
-            
             const countElem = document.getElementById('promptCount');
             if (countElem) countElem.textContent = `${filtered.length}`;
         }
@@ -1146,121 +1007,33 @@
         function filterCategory(category) {
             currentCategory = category;
             filterPrompts();
-            
-            document.querySelectorAll('[data-category-btn]').forEach(btn => {
-                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg');
-                btn.classList.add('glass', 'text-white/80');
-            });
-            
+            document.querySelectorAll('[data-category-btn]').forEach(btn => { btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg'); btn.classList.add('glass', 'text-white/80'); });
             const activeBtn = document.querySelector(`[data-category-btn="${category}"]`);
-            if (activeBtn) {
-                activeBtn.classList.remove('glass', 'text-white/80');
-                activeBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg');
-            }
+            if (activeBtn) { activeBtn.classList.remove('glass', 'text-white/80'); activeBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg'); }
         }
 
-        // ========== RENDER CATEGORIES ==========
         async function renderCategories() {
             try {
                 let categories = ['All', 'Portrait', 'Nature', 'Cinematic', 'Cyberpunk', 'Fantasy', 'Abstract'];
-                
                 const container = document.getElementById('categoriesContainer');
                 if (!container) return;
-                
-                container.innerHTML = categories.map(cat => `
-                    <button data-category-btn="${cat}" 
-                            onclick="filterCategory('${cat}')"
-                            class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">
-                        ${cat}
-                    </button>
-                `).join('');
-            } catch (error) {
-                console.error('Error rendering categories:', error);
-            }
+                container.innerHTML = categories.map(cat => `<button data-category-btn="${cat}" onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">${cat}</button>`).join('');
+            } catch (error) { console.error('Error rendering categories:', error); }
         }
 
-        // ========== HELPER FUNCTIONS ==========
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatNumber(num) {
-            if (!num) return '0';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-            return num.toString();
-        }
-
-        function showError(message) {
-            const grid = document.getElementById('promptsGrid');
-            if (grid) {
-                grid.innerHTML = `
-                    <div class="col-span-2 text-center py-12">
-                        <i class="fas fa-exclamation-triangle text-yellow-400 text-6xl mb-4"></i>
-                        <p class="text-white/80 text-lg">${message}</p>
-                        <button onclick="fetchPrompts()" class="mt-4 glass px-6 py-2 rounded-full text-white hover:bg-white/20 transition-all">
-                            Try Again
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        // ========== AD MODAL WATCH BUTTON LOGIC ==========
-        document.getElementById('watchAdBtn').addEventListener('click', () => {
-            const btn = document.getElementById('watchAdBtn');
-            const originalText = btn.innerHTML;
-            
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            showToast('🎬 Loading Video Ad...', false, 2000);
-            
-            setTimeout(() => {
-                document.getElementById('adModal').classList.add('hidden');
-                
-                if (pendingPromptText) {
-                    copyToClipboard(pendingPromptText);
-                    pendingPromptText = null;
-                }
-                
-                openAdLink();
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-                
-                if (currentCopyButton) {
-                    currentCopyButton = null;
-                }
-            }, 2000);
-        });
-
-        // ========== EXIT MODAL BUTTONS ==========
-        document.getElementById('confirmExitBtn').addEventListener('click', exitApp);
-        document.getElementById('cancelExitBtn').addEventListener('click', hideExitModal);
+        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function formatNumber(num) { if (!num) return '0'; if (num >= 1000) return (num / 1000).toFixed(1) + 'k'; return num.toString(); }
+        function showError(message) { const grid = document.getElementById('promptsGrid'); if (grid) { grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-exclamation-triangle text-yellow-400 text-6xl mb-4"></i><p class="text-white/80 text-lg">${message}</p><button onclick="fetchPrompts()" class="mt-4 glass px-6 py-2 rounded-full text-white hover:bg-white/20 transition-all">Try Again</button></div>`; } }
 
         // ========== EVENT LISTENERS ==========
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            currentSearchTerm = e.target.value;
-            filterPrompts();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeSidebar();
-                if (!document.getElementById('adModal').classList.contains('hidden')) {
-                    closeAdModal();
-                }
-                if (!document.getElementById('exitModal').classList.contains('hidden')) {
-                    hideExitModal();
-                }
-            }
-        });
+        document.getElementById('searchInput').addEventListener('input', (e) => { currentSearchTerm = e.target.value; filterPrompts(); });
+        document.getElementById('closeAdBtn').addEventListener('click', closeAdModalAndCopy);
+        document.getElementById('confirmExitBtn').addEventListener('click', exitApp);
+        document.getElementById('cancelExitBtn').addEventListener('click', hideExitModal);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeSidebar(); if (!document.getElementById('adModal').classList.contains('hidden')) closeAdModal(); if (!document.getElementById('exitModal').classList.contains('hidden')) hideExitModal(); } });
 
         // ========== INITIALIZE ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchPrompts();
-        });
+        document.addEventListener('DOMContentLoaded', () => { fetchPrompts(); });
     </script>
 </body>
 </html>
