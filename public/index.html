@@ -821,14 +821,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ========== CLOSE AD MODAL WITHOUT COPY (Cancel) ==========
         function closeAdModal() {
-            if (!isAdCompleted && !confirm('Ad not completed yet. Cancel anyway?')) {
-                return;
-            }
             
             stopAdTimer();
             
             const timerDisplay = document.getElementById('adTimer');
-            if (timerDisplay) timerDisplay.textContent = '10s';
+            if (timerDisplay) timerDisplay.textContent = '15s';
             
             const modal = document.getElementById('adModal');
             modal.classList.add('hidden');
