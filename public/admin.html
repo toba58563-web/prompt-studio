@@ -2,393 +2,161 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Prompt Studio | Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - Prompt Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .glass-card:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.5); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.8); }
-        
-        /* Table Styles */
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .data-table th { color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
-        .data-table td { color: white; font-size: 13px; }
-        .data-table tr:hover { background: rgba(255,255,255,0.03); }
-        
-        /* Status Badges */
-        .badge-success { background: rgba(34,197,94,0.2); color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-        .badge-danger { background: rgba(239,68,68,0.2); color: #f87171; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-        .badge-warning { background: rgba(245,158,11,0.2); color: #fbbf24; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-        .badge-info { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-        
-        /* Switch Toggle */
-        .switch { position: relative; display: inline-block; width: 48px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.2); transition: 0.3s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
-        input:checked + .slider { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
-        input:checked + .slider:before { transform: translateX(24px); }
-        
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        
-        /* Stat Card */
-        .stat-card { padding: 20px; }
-        .stat-value { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #fff, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        
-        /* Loading Skeleton */
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        
-        /* Dashboard Tabs */
-        .tab-btn { padding: 10px 20px; border-radius: 12px; transition: all 0.2s; cursor: pointer; }
-        .tab-btn.active { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="p-6">
-    <div class="max-w-7xl mx-auto">
+<body class="min-h-screen p-6">
+    <div class="max-w-2xl mx-auto">
         <!-- Header -->
-        <div class="glass p-6 mb-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">Prompt Studio Admin</h1>
-                <p class="text-white/40 text-sm mt-1">Premium Dashboard | Real-Time Analytics</p>
+        <div class="glass rounded-2xl p-6 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fas fa-lock text-purple-400 text-2xl"></i>
+                <h1 class="text-white text-2xl font-bold">Admin Panel</h1>
             </div>
-            <div id="sessionStatus" class="text-white/50 text-sm">
-                <i class="fas fa-circle text-green-500 text-xs mr-1"></i> Session Active
-            </div>
+            <p class="text-white/60 text-sm">Add new prompts to the database</p>
         </div>
 
-        <!-- Login Screen -->
-        <div id="loginScreen" class="glass max-w-md mx-auto p-8 text-center">
-            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-shield-alt text-white text-3xl"></i>
+        <!-- Login Form -->
+        <div id="loginForm" class="glass rounded-2xl p-6">
+            <div class="mb-4">
+                <label class="text-white block mb-2">Admin Password</label>
+                <input type="password" id="adminPassword" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="Enter admin password">
             </div>
-            <h2 class="text-white text-2xl font-bold mb-2">Admin Access</h2>
-            <p class="text-white/50 text-sm mb-6">Enter your credentials to continue</p>
-            <input type="email" id="adminEmail" placeholder="admin@promptstudio.com" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white mb-3 focus:outline-none focus:border-purple-500">
-            <input type="password" id="adminPassword" placeholder="Password" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white mb-4 focus:outline-none focus:border-purple-500">
-            <button onclick="login()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 rounded-xl font-semibold text-white">Login</button>
-            <div id="loginError" class="mt-4 text-red-400 text-sm hidden"></div>
+            <button onclick="login()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold">Login</button>
         </div>
 
-        <!-- Dashboard -->
-        <div id="dashboard" class="hidden space-y-6">
-            <!-- Session Timer Alert -->
-            <div id="sessionAlert" class="glass p-3 text-center hidden">
-                <i class="fas fa-clock mr-2"></i> Your session will expire in <span id="timer">30:00</span>. <a href="#" onclick="logout()" class="text-purple-400">Login again?</a>
+        <!-- Add Prompt Form (Hidden initially) -->
+        <div id="addForm" class="glass rounded-2xl p-6 hidden">
+            <div class="mb-4">
+                <label class="text-white block mb-2">Title</label>
+                <input type="text" id="title" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="e.g., Cyberpunk Samurai">
             </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="glass-card stat-card"><div class="flex justify-between items-start"><div><p class="text-white/50 text-sm">Total Downloads</p><p class="stat-value text-3xl mt-2" id="totalDownloads">0</p></div><i class="fas fa-download text-purple-400 text-3xl"></i></div></div>
-                <div class="glass-card stat-card"><div class="flex justify-between items-start"><div><p class="text-white/50 text-sm">Active Users (24h)</p><p class="stat-value text-3xl mt-2" id="activeUsers">0</p></div><i class="fas fa-users text-pink-400 text-3xl"></i></div></div>
-                <div class="glass-card stat-card"><div class="flex justify-between items-start"><div><p class="text-white/50 text-sm">Total Revenue</p><p class="stat-value text-3xl mt-2" id="totalRevenue">$0</p></div><i class="fas fa-dollar-sign text-green-400 text-3xl"></i></div></div>
-                <div class="glass-card stat-card"><div class="flex justify-between items-start"><div><p class="text-white/50 text-sm">Conversion Rate</p><p class="stat-value text-3xl mt-2" id="conversionRate">0%</p></div><i class="fas fa-chart-line text-yellow-400 text-3xl"></i></div></div>
+            
+            <div class="mb-4">
+                <label class="text-white block mb-2">Category</label>
+                <select id="category" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500">
+                    <option value="Portrait">Portrait</option>
+                    <option value="Cyberpunk">Cyberpunk</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Nature">Nature</option>
+                    <option value="Abstract">Abstract</option>
+                    <option value="Architecture">Architecture</option>
+                    <option value="Character">Character</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                </select>
             </div>
-
-            <!-- Chart -->
-            <div class="glass p-6">
-                <div class="flex justify-between items-center mb-4"><h3 class="text-white font-semibold">User Growth (Last 7 Days)</h3><button onclick="refreshChart()" class="text-white/50 hover:text-white text-sm"><i class="fas fa-sync-alt mr-1"></i>Refresh</button></div>
-                <canvas id="userGrowthChart" height="80"></canvas>
+            
+            <div class="mb-4">
+                <label class="text-white block mb-2">Prompt Text</label>
+                <textarea id="prompt" rows="5" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="Enter the full prompt..."></textarea>
             </div>
-
-            <!-- Dashboard Tabs -->
-            <div class="flex gap-2 flex-wrap border-b border-white/10 pb-2">
-                <button class="tab-btn active" onclick="switchTab('users')"><i class="fas fa-users mr-2"></i>Users</button>
-                <button class="tab-btn" onclick="switchTab('prompts')"><i class="fas fa-magic mr-2"></i>Prompts</button>
-                <button class="tab-btn" onclick="switchTab('transactions')"><i class="fas fa-credit-card mr-2"></i>Transactions</button>
-                <button class="tab-btn" onclick="switchTab('subscriptions')"><i class="fas fa-crown mr-2"></i>Subscriptions</button>
-                <button class="tab-btn" onclick="switchTab('controls')"><i class="fas fa-sliders-h mr-2"></i>Controls</button>
+            
+            <div class="mb-4">
+                <label class="text-white block mb-2">Image URL (Optional)</label>
+                <input type="text" id="imageUrl" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="https://picsum.photos/400/300">
             </div>
-
-            <!-- Users Tab -->
-            <div id="usersTab" class="tab-pane active">
-                <div class="glass p-6">
-                    <div class="flex justify-between items-center mb-4"><h3 class="text-white font-semibold">User Management</h3><button onclick="loadUsers()" class="text-white/50 hover:text-white text-sm"><i class="fas fa-sync-alt mr-1"></i>Refresh</button></div>
-                    <div class="overflow-x-auto">
-                        <table class="data-table w-full">
-                            <thead><tr><th>Name</th><th>Email</th><th>Device</th><th>Status</th><th>Plan</th><th>Actions</th></tr></thead>
-                            <tbody id="usersTableBody"><tr><td colspan="6" class="text-center text-white/50">Loading users...<td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prompts Tab -->
-            <div id="promptsTab" class="tab-pane">
-                <div class="glass p-6">
-                    <div class="flex justify-between items-center mb-4"><h3 class="text-white font-semibold">Prompt Management</h3><button onclick="loadPrompts()" class="text-white/50 hover:text-white text-sm"><i class="fas fa-sync-alt mr-1"></i>Refresh</button></div>
-                    <div class="mb-4"><button onclick="showAddPromptModal()" class="bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-2 rounded-xl text-white text-sm"><i class="fas fa-plus mr-1"></i>Add New Prompt</button></div>
-                    <div class="overflow-x-auto"><table class="data-table w-full"><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead><tbody id="promptsTableBody"><tr><td colspan="4" class="text-center text-white/50">Loading prompts...<td></tr></tbody></table></div>
-                </div>
-            </div>
-
-            <!-- Transactions Tab -->
-            <div id="transactionsTab" class="tab-pane">
-                <div class="glass p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-white font-semibold">Recent Transactions</h3><button onclick="loadTransactions()" class="text-white/50 hover:text-white text-sm"><i class="fas fa-sync-alt mr-1"></i>Refresh</button></div>
-                <div class="overflow-x-auto"><table class="data-table w-full"><thead><tr><th>User</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="transactionsTableBody"><tr><td colspan="4" class="text-center text-white/50">Loading transactions...<td></tr></tbody></table></div></div>
-            </div>
-
-            <!-- Subscriptions Tab -->
-            <div id="subscriptionsTab" class="tab-pane">
-                <div class="glass p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-white font-semibold">Premium Users</h3><button onclick="loadSubscriptions()" class="text-white/50 hover:text-white text-sm"><i class="fas fa-sync-alt mr-1"></i>Refresh</button></div>
-                <div class="overflow-x-auto"><table class="data-table w-full"><thead><tr><th>Name</th><th>Email</th><th>Expiry Date</th><th>Action</th></tr></thead><tbody id="subscriptionsTableBody"><tr><td colspan="4" class="text-center text-white/50">Loading...<td></tr></tbody></table></div></div>
-            </div>
-
-            <!-- Controls Tab -->
-            <div id="controlsTab" class="tab-pane">
-                <div class="glass p-6 space-y-6">
-                    <div><h3 class="text-white font-semibold mb-4">Ad Management</h3><div class="space-y-3"><div class="flex justify-between items-center"><span class="text-white">Banner Ads</span><label class="switch"><input type="checkbox" id="bannerAdsToggle" onchange="saveAppConfig()"><span class="slider"></span></label></div>
-                    <div class="flex justify-between items-center"><span class="text-white">Interstitial Ads</span><label class="switch"><input type="checkbox" id="interstitialAdsToggle" onchange="saveAppConfig()"><span class="slider"></span></label></div>
-                    <div class="flex justify-between items-center"><span class="text-white">Reward Ads</span><label class="switch"><input type="checkbox" id="rewardAdsToggle" onchange="saveAppConfig()"><span class="slider"></span></label></div></div></div>
-                    <div><h3 class="text-white font-semibold mb-4">Maintenance Mode</h3><div class="flex justify-between items-center"><span class="text-white">Enable Maintenance</span><label class="switch"><input type="checkbox" id="maintenanceToggle" onchange="toggleMaintenance()"><span class="slider"></span></label></div>
-                    <textarea id="maintenanceMessage" placeholder="Maintenance message..." class="mt-3 w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-sm"></textarea></div>
-                    <div><h3 class="text-white font-semibold mb-4">Forced Update</h3><div class="grid grid-cols-2 gap-3"><input type="text" id="minVersion" placeholder="Min Version (e.g., 1.2.0)" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white"><input type="text" id="updateUrl" placeholder="Update URL" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white"></div>
-                    <div class="mt-3 flex justify-between items-center"><span class="text-white">Force Update</span><label class="switch"><input type="checkbox" id="forceUpdateToggle" onchange="saveAppConfig()"><span class="slider"></span></label></div>
-                    <button onclick="saveAppConfig()" class="mt-4 w-full bg-gradient-to-r from-purple-500 to-pink-500 py-2 rounded-xl text-white">Save All Settings</button></div>
-                </div>
-            </div>
+            
+            <button onclick="addPrompt()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold mb-3">
+                <i class="fas fa-plus mr-2"></i> Add Prompt
+            </button>
+            
+            <button onclick="logout()" class="w-full bg-white/10 text-white/80 py-2 rounded-xl font-semibold">
+                Logout
+            </button>
+            
+            <div id="message" class="mt-4 text-center text-sm"></div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="userModal" class="modal-overlay"><div class="modal-content glass p-6"><h3 class="text-white text-xl mb-4" id="modalTitle">User Details</h3><div id="modalBody"></div><button onclick="closeModal()" class="mt-4 w-full bg-gray-600 py-2 rounded-xl text-white">Close</button></div></div>
-    <div id="addPromptModal" class="modal-overlay"><div class="modal-content glass p-6"><h3 class="text-white text-xl mb-4">Add New Prompt</h3><input type="text" id="newPromptTitle" placeholder="Title" class="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white mb-3"><select id="newPromptCategory" class="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white mb-3"><option>Portrait</option><option>Cyberpunk</option><option>Fantasy</option><option>Nature</option></select><textarea id="newPromptText" rows="4" placeholder="Prompt text..." class="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white mb-3"></textarea><input type="text" id="newPromptImage" placeholder="Image URL" class="w-full px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white mb-4"><button onclick="addPrompt()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 py-2 rounded-xl text-white">Add Prompt</button><button onclick="closeModal()" class="mt-2 w-full bg-gray-600 py-2 rounded-xl text-white">Cancel</button></div></div>
-
     <script>
-        let adminToken = null;
-        let sessionInterval = null;
-        let logoutTimer = null;
-        let userGrowthChart = null;
+        let adminKey = '';
 
-        // ========== AUTH ==========
         async function login() {
-            const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
-            const errorDiv = document.getElementById('loginError');
+            adminKey = password;
+            
+            // Verify by trying to fetch stats
+            try {
+                const res = await fetch('/api/stats');
+                if (res.ok) {
+                    // Show add form
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('addForm').classList.remove('hidden');
+                    showMessage('✅ Login successful!', 'text-green-400');
+                    loadStats();
+                } else {
+                    showMessage('❌ Invalid password', 'text-red-400');
+                }
+            } catch (error) {
+                showMessage('❌ Connection error', 'text-red-400');
+            }
+        }
+
+        async function addPrompt() {
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const prompt = document.getElementById('prompt').value;
+            const imageUrl = document.getElementById('imageUrl').value;
+            
+            if (!title || !prompt) {
+                showMessage('❌ Title and Prompt are required!', 'text-red-400');
+                return;
+            }
             
             try {
-                const res = await fetch('/api/admin/login', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                const res = await fetch('/api/admin/prompts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, category, prompt, imageUrl, adminKey })
                 });
+                
                 const data = await res.json();
                 if (data.success) {
-                    adminToken = data.token;
-                    localStorage.setItem('adminToken', adminToken);
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('dashboard').classList.remove('hidden');
-                    startSessionTimer();
-                    loadAllData();
+                    showMessage('✅ Prompt added successfully!', 'text-green-400');
+                    clearForm();
                 } else {
-                    errorDiv.textContent = data.error;
-                    errorDiv.classList.remove('hidden');
+                    showMessage('❌ ' + data.error, 'text-red-400');
                 }
-            } catch (err) { errorDiv.textContent = 'Connection error'; errorDiv.classList.remove('hidden'); }
+            } catch (error) {
+                showMessage('❌ Error adding prompt', 'text-red-400');
+            }
         }
 
-        async function logout() {
-            if (adminToken) await fetch('/api/admin/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}` } });
-            adminToken = null; localStorage.removeItem('adminToken');
-            if (sessionInterval) clearInterval(sessionInterval);
-            document.getElementById('dashboard').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('adminEmail').value = '';
-            document.getElementById('adminPassword').value = '';
-        }
-
-        function startSessionTimer() {
-            let seconds = 30 * 60;
-            const timerDisplay = document.getElementById('timer');
-            const alertDiv = document.getElementById('sessionAlert');
-            if (sessionInterval) clearInterval(sessionInterval);
-            sessionInterval = setInterval(() => {
-                seconds--;
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                timerDisplay.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-                if (seconds <= 60) alertDiv.classList.remove('hidden');
-                if (seconds <= 0) { clearInterval(sessionInterval); logout(); }
-            }, 1000);
-        }
-
-        // ========== DATA LOADING ==========
-        async function loadAllData() { await Promise.all([loadStats(), loadUserGrowth(), loadUsers(), loadPrompts(), loadTransactions(), loadSubscriptions(), loadAppConfig()]); }
-        
         async function loadStats() {
-            const res = await fetch('/api/admin/stats', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('totalDownloads').innerText = data.stats.totalDownloads.toLocaleString();
-                document.getElementById('activeUsers').innerText = data.stats.activeUsers24h.toLocaleString();
-                document.getElementById('totalRevenue').innerText = `$${data.stats.totalRevenue.toLocaleString()}`;
-                document.getElementById('conversionRate').innerText = `${data.stats.conversionRate}%`;
-            }
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                if (data.success) {
+                    showMessage(`📊 Total prompts: ${data.stats.totalPrompts}`, 'text-blue-400');
+                }
+            } catch (error) {}
         }
 
-        async function loadUserGrowth() {
-            const res = await fetch('/api/admin/user-growth', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success && userGrowthChart) {
-                userGrowthChart.data.datasets[0].data = data.data.map(d => d.count);
-                userGrowthChart.data.labels = data.data.map(d => d.date);
-                userGrowthChart.update();
-            } else if (data.success) {
-                const ctx = document.getElementById('userGrowthChart').getContext('2d');
-                userGrowthChart = new Chart(ctx, { type: 'line', data: { labels: data.data.map(d => d.date), datasets: [{ label: 'New Users', data: data.data.map(d => d.count), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } } } });
-            }
-        }
-        function refreshChart() { loadUserGrowth(); }
-
-        async function loadUsers() {
-            const res = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('usersTableBody').innerHTML = data.users.map(u => `
-                    <tr><td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td><td>${escapeHtml(u.deviceModel || 'Unknown')}</td>
-                    <td><span class="badge-${u.status === 'active' ? 'success' : 'danger'}">${u.status}</span></td>
-                    <td><span class="badge-${u.plan === 'premium' ? 'info' : 'warning'}">${u.plan}</span></td>
-                    <td><button onclick="viewUser('${u._id}')" class="text-purple-400 mr-2"><i class="fas fa-eye"></i></button>
-                    <button onclick="blockUser('${u._id}', '${u.status}')" class="text-${u.status === 'active' ? 'yellow' : 'green'}-400 mr-2"><i class="fas fa-${u.status === 'active' ? 'ban' : 'check'}"></i></button>
-                    <button onclick="resetPassword('${u._id}')" class="text-blue-400"><i class="fas fa-key"></i></button></td></tr>
-                `).join('');
-            }
+        function clearForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('prompt').value = '';
+            document.getElementById('imageUrl').value = '';
         }
 
-        async function blockUser(userId, currentStatus) {
-            if (confirm(`Are you sure you want to ${currentStatus === 'active' ? 'block' : 'unblock'} this user?`)) {
-                await fetch('/api/admin/users/block', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` }, body: JSON.stringify({ userId, action: currentStatus === 'active' ? 'block' : 'unblock' }) });
-                loadUsers();
-            }
+        function logout() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('addForm').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+            showMessage('', '');
         }
 
-        async function resetPassword(userId) { const newPass = prompt('Enter new password:'); if (newPass) await fetch('/api/admin/users/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` }, body: JSON.stringify({ userId, newPassword: newPass }) }); }
-
-        async function viewUser(userId) { const modal = document.getElementById('userModal'); document.getElementById('modalTitle').innerText = 'User Profile'; document.getElementById('modalBody').innerHTML = '<div class="skeleton h-20 mb-3"></div><div class="skeleton h-20"></div>'; modal.classList.add('active'); }
-
-        async function loadPrompts() {
-            const res = await fetch('/api/admin/prompts', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('promptsTableBody').innerHTML = data.prompts.map(p => `
-                    <tr><td>${escapeHtml(p.title)}</td><td><span class="badge-info">${p.category}</span></td>
-                    <td><span class="badge-${p.status === 'active' ? 'success' : p.status === 'hidden' ? 'danger' : 'warning'}">${p.status}</span></td>
-                    <td><button onclick="editPrompt('${p._id}')" class="text-purple-400 mr-2"><i class="fas fa-edit"></i></button>
-                    <button onclick="deletePrompt('${p._id}')" class="text-red-400"><i class="fas fa-trash"></i></button></td></tr>
-                `).join('');
-            }
+        function showMessage(msg, color) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerHTML = msg;
+            msgDiv.className = `mt-4 text-center text-sm ${color}`;
+            setTimeout(() => { if (msgDiv.innerHTML === msg) msgDiv.innerHTML = ''; }, 3000);
         }
-
-        function showAddPromptModal() { document.getElementById('addPromptModal').classList.add('active'); }
-        async function addPrompt() {
-            await fetch('/api/admin/prompts', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` }, body: JSON.stringify({ title: document.getElementById('newPromptTitle').value, category: document.getElementById('newPromptCategory').value, prompt: document.getElementById('newPromptText').value, imageUrl: document.getElementById('newPromptImage').value, status: 'active' }) });
-            closeModal(); loadPrompts();
-        }
-        async function deletePrompt(id) { if (confirm('Delete this prompt?')) { await fetch(`/api/admin/prompts/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadPrompts(); } }
-
-        async function loadTransactions() {
-            const res = await fetch('/api/admin/transactions', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('transactionsTableBody').innerHTML = data.transactions.map(t => `
-                    <tr><td>${escapeHtml(t.userEmail || 'N/A')}</td><td>$${t.amount}</td>
-                    <td><span class="badge-${t.status === 'success' ? 'success' : 'danger'}">${t.status}</span></td>
-                    <td>${new Date(t.createdAt).toLocaleDateString()}</td></tr>
-                `).join('');
-            }
-        }
-
-        async function loadSubscriptions() {
-            const res = await fetch('/api/admin/subscription-stats', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('subscriptionsTableBody').innerHTML = data.stats.premium.map(u => `
-                    <tr><td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td><td>${u.premiumExpiry ? new Date(u.premiumExpiry).toLocaleDateString() : 'N/A'}</td>
-                    <td><button onclick="removePremium('${u._id}')" class="text-red-400 text-sm">Remove Premium</button></td></tr>
-                `).join('');
-            }
-        }
-
-        async function loadAppConfig() {
-            const res = await fetch('/api/admin/config', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('bannerAdsToggle').checked = data.config.adSettings?.bannerAds || false;
-                document.getElementById('interstitialAdsToggle').checked = data.config.adSettings?.interstitialAds || false;
-                document.getElementById('rewardAdsToggle').checked = data.config.adSettings?.rewardAds || false;
-                document.getElementById('maintenanceToggle').checked = data.config.maintenanceMode || false;
-                document.getElementById('maintenanceMessage').value = data.config.maintenanceMessage || '';
-                document.getElementById('minVersion').value = data.config.updateSettings?.minVersion || '1.0.0';
-                document.getElementById('updateUrl').value = data.config.updateSettings?.updateUrl || '';
-                document.getElementById('forceUpdateToggle').checked = data.config.updateSettings?.forceUpdate || false;
-            }
-        }
-
-        async function saveAppConfig() {
-            await fetch('/api/admin/config', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` }, body: JSON.stringify({ maintenanceMode: document.getElementById('maintenanceToggle').checked, maintenanceMessage: document.getElementById('maintenanceMessage').value, adSettings: { bannerAds: document.getElementById('bannerAdsToggle').checked, interstitialAds: document.getElementById('interstitialAdsToggle').checked, rewardAds: document.getElementById('rewardAdsToggle').checked }, updateSettings: { minVersion: document.getElementById('minVersion').value, updateUrl: document.getElementById('updateUrl').value, forceUpdate: document.getElementById('forceUpdateToggle').checked } }) });
-            alert('Settings saved!');
-        }
-
-        async function toggleMaintenance() { saveAppConfig(); }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            document.getElementById(`${tab}Tab`).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            if (tab === 'users') loadUsers(); else if (tab === 'prompts') loadPrompts(); else if (tab === 'transactions') loadTransactions(); else if (tab === 'subscriptions') loadSubscriptions();
-        }
-
-        function closeModal() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
-        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-
-        // Auto-login if token exists
-        const savedToken = localStorage.getItem('adminToken');
-        if (savedToken) { adminToken = savedToken; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); startSessionTimer(); loadAllData(); }
     </script>
 </body>
 </html>
