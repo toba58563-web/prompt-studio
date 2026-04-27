@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Prompt Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-glass { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="glass w-full max-w-md p-8 rounded-3xl shadow-2xl">
+        <div class="text-center mb-6">
+            <div class="inline-block p-4 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-500 mb-4 shadow-lg shadow-purple-500/30">
+                <i class="fas fa-user-astronaut text-white text-3xl"></i>
+            </div>
+            <h2 id="formTitle" class="text-3xl font-bold text-white">Welcome Back</h2>
+            <p id="formSub" class="text-gray-400 mt-2">Login to access premium prompts</p>
+        </div>
+
+        <div id="g_id_onload"
+             data-client_id=218748778650-5s8ag3ke3apdoafav0jt1rd66fbe6md9.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin w-full mb-6" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="continue_with" data-size="large" data-logo_alignment="left" data-width="100%"></div>
+
+        <div class="relative flex py-3 items-center">
+            <div class="flex-grow border-t border-white/10"></div>
+            <span class="flex-shrink mx-4 text-gray-500 text-xs uppercase">Or use email</span>
+            <div class="flex-grow border-t border-white/10"></div>
+        </div>
+
+        <form id="authForm" class="space-y-4">
+            <div id="nameContainer" class="hidden">
+                <label class="text-sm text-gray-300 ml-1">Full Name</label>
+                <input type="text" id="name" class="input-glass w-full px-4 py-3 rounded-xl focus:outline-none focus:border-purple-500 mt-1" placeholder="Full Name">
+            </div>
+            <div>
+                <label class="text-sm text-gray-300 ml-1">Email Address</label>
+                <input type="email" id="email" required class="input-glass w-full px-4 py-3 rounded-xl focus:outline-none focus:border-purple-500 mt-1" placeholder="example@mail.com">
+            </div>
+            <div>
+                <label class="text-sm text-gray-300 ml-1">Password</label>
+                <input type="password" id="password" required class="input-glass w-full px-4 py-3 rounded-xl focus:outline-none focus:border-purple-500 mt-1" placeholder="••••••••">
+            </div>
+            
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold text-lg hover:scale-[1.02] transition-transform shadow-lg shadow-purple-500/20 mt-2">
+                Continue
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-gray-400">
+                <span id="toggleText">Don't have an account?</span>
+                <button onclick="toggleAuth()" id="toggleBtn" class="text-purple-400 font-bold ml-1 hover:underline">Sign Up</button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('formTitle').innerText = isLogin ? 'Welcome Back' : 'Create Account';
+            document.getElementById('nameContainer').classList.toggle('hidden', isLogin);
+            document.getElementById('toggleText').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
+            document.getElementById('toggleBtn').innerText = isLogin ? "Sign Up" : "Login";
+        }
+
+        async function handleCredentialResponse(response) {
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.credential })
+            });
+            const data = await res.json();
+            if (data.success) window.location.href = '/index.html';
+        }
+
+        document.getElementById('authForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
+
+            const payload = { email, password };
+            if (!isLogin) payload.name = name;
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) window.location.href = '/index.html';
+                else alert(data.message || 'Error');
+            } catch (err) { alert('Connection Error!'); }
+        };
+    </script>
+</body>
+</html>
