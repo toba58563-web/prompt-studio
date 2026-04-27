@@ -24,7 +24,7 @@
         </div>
 
         <div id="g_id_onload"
-             data-client_id218748778650-rjfjooa6cat7l3pjvdl8176gheiskudo.apps.googleusercontent.com"
+             data-client_id="218748778650-rjfjooa6cat7l3pjvdf8l76gheiskudo.apps.googleusercontent.com"
              data-callback="handleCredentialResponse"
              data-auto_prompt="false">
         </div>
@@ -75,13 +75,22 @@
         }
 
         async function handleCredentialResponse(response) {
-            const res = await fetch('/api/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: response.credential })
-            });
-            const data = await res.json();
-            if (data.success) window.location.href = '/index.html';
+            try {
+                const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Login Successful!');
+                    window.location.href = '/index.html';
+                } else {
+                    alert('Login Failed');
+                }
+            } catch (err) {
+                alert('Connection Error!');
+            }
         }
 
         document.getElementById('authForm').onsubmit = async (e) => {
