@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Admin Panel - Prompt Studio</title>
+    <title>Super Admin Panel - Prompt Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -46,12 +46,66 @@
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .data-table th {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .data-table td {
+            color: white;
+            font-size: 13px;
+        }
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .table-container {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: rgba(139,92,246,0.6);
+            border-radius: 10px;
+        }
+
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .action-btn {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="flex items-center justify-center p-4 min-h-screen">
-    <div class="max-w-md w-full">
+    <div class="max-w-6xl w-full mx-auto">
         <!-- Login Card -->
-        <div id="loginCard" class="glass p-8">
+        <div id="loginCard" class="glass p-8 max-w-md mx-auto">
             <div class="text-center mb-6">
                 <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <i class="fas fa-shield-alt text-white text-3xl"></i>
@@ -68,18 +122,125 @@
             <div id="loginError" class="mt-4 text-red-400 text-sm text-center hidden"></div>
         </div>
 
-        <!-- Dashboard Card (After Login) -->
-        <div id="dashboardCard" class="glass p-8 hidden">
-            <div class="text-center mb-6">
-                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <i class="fas fa-crown text-white text-3xl"></i>
+        <!-- Super Admin Dashboard (After Login) -->
+        <div id="dashboardCard" class="hidden space-y-5">
+            <!-- Header -->
+            <div class="glass p-5 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white text-2xl font-bold">Super Admin Panel</h2>
+                        <p id="adminEmailDisplay" class="text-white/60 text-sm">admin@promptstudio.com</p>
+                    </div>
                 </div>
-                <h2 class="text-white text-2xl font-bold">Admin Dashboard</h2>
-                <p id="adminEmailDisplay" class="text-white/60 text-sm mt-1">admin@promptstudio.com</p>
+                <div class="flex items-center gap-3">
+                    <button onclick="refreshAllData()" class="glass px-4 py-2 rounded-xl text-white text-sm hover:bg-white/10 transition-all">
+                        <i class="fas fa-sync-alt mr-2"></i> Refresh
+                    </button>
+                    <button onclick="adminLogout()" class="bg-red-500/20 hover:bg-red-500/30 px-4 py-2 rounded-xl text-white/80 text-sm transition-all">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </button>
+                </div>
             </div>
-            
+
+            <!-- Analytics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass stat-card p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-white/50 text-sm">Total Downloads / Users</p>
+                            <p class="text-white text-3xl font-bold" id="totalUsers">0</p>
+                        </div>
+                        <i class="fas fa-users text-purple-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="glass stat-card p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-white/50 text-sm">Active Users (Today)</p>
+                            <p class="text-white text-3xl font-bold" id="activeUsers">0</p>
+                        </div>
+                        <i class="fas fa-user-check text-green-400 text-3xl"></i>
+                    </div>
+                </div>
+                <div class="glass stat-card p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-white/50 text-sm">Total Prompts</p>
+                            <p class="text-white text-3xl font-bold" id="totalPrompts">0</p>
+                        </div>
+                        <i class="fas fa-magic text-yellow-400 text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Prompt Section -->
+            <div class="glass p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <i class="fas fa-plus-circle text-green-400 text-xl"></i>
+                    <h3 class="text-white font-semibold text-xl">Add New Prompt</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="newTitle" placeholder="Title" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50">
+                    <select id="newCategory" class="input-field w-full px-4 py-3 rounded-xl text-white">
+                        <option value="Portrait">Portrait</option>
+                        <option value="Cyberpunk">Cyberpunk</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Abstract">Abstract</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Character">Character</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                    </select>
+                </div>
+                <textarea id="newPrompt" rows="4" placeholder="Prompt Text" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mt-4"></textarea>
+                <input type="text" id="newImageUrl" placeholder="Image URL (Optional)" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mt-4">
+                <button onclick="addPrompt()" class="mt-5 w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 py-3 rounded-xl font-semibold text-white transition-all">
+                    <i class="fas fa-save mr-2"></i> Add Prompt
+                </button>
+            </div>
+
+            <!-- Manage Prompts Section -->
+            <div class="glass p-6">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-list-ul text-blue-400 text-xl"></i>
+                        <h3 class="text-white font-semibold text-xl">Manage Prompts</h3>
+                    </div>
+                    <button onclick="loadPrompts()" class="glass px-3 py-1 rounded-xl text-white/70 text-sm hover:bg-white/10">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr><th>Title</th><th>Category</th><th>Prompt Preview</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="promptsTableBody">
+                            <tr><td colspan="4" class="text-center text-white/50">Loading prompts...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Alert / Broadcast Section -->
+            <div class="glass-card p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fas fa-bullhorn text-orange-400 text-lg"></i>
+                    <h3 class="text-white font-semibold text-lg">Send Alert to Users</h3>
+                </div>
+                <div class="flex gap-3">
+                    <input type="text" id="broadcastMessage" placeholder="Enter update message for all users..." class="input-field flex-1 px-4 py-3 rounded-xl text-white placeholder-white/50">
+                    <button onclick="sendBroadcast()" class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105">
+                        <i class="fas fa-paper-plane mr-2"></i> Push
+                    </button>
+                </div>
+            </div>
+
             <!-- Change Password Section -->
-            <div class="glass-card p-5 mb-4">
+            <div class="glass-card p-5">
                 <div class="flex items-center gap-2 mb-4">
                     <i class="fas fa-key text-yellow-400 text-lg"></i>
                     <h3 class="text-white font-semibold text-lg">Change Password</h3>
@@ -91,11 +252,6 @@
                     <i class="fas fa-save mr-2"></i> Update Password
                 </button>
             </div>
-            
-            <!-- Logout Button -->
-            <button onclick="adminLogout()" class="w-full bg-red-500/20 hover:bg-red-500/30 py-3 rounded-xl font-semibold text-white/80 transition-all">
-                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-            </button>
         </div>
     </div>
 
@@ -108,7 +264,7 @@
     </div>
 
     <script>
-        let adminToken = null;
+        let adminToken = localStorage.getItem('adminToken');
         
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
@@ -116,12 +272,7 @@
             const toastDiv = toast.querySelector('div');
             
             toastMsg.textContent = message;
-            
-            if (isError) {
-                toastDiv.className = 'bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
-            } else {
-                toastDiv.className = 'bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
-            }
+            toastDiv.className = isError ? 'bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl' : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
             
             toast.classList.remove('hidden');
             toast.classList.add('toast-show');
@@ -131,6 +282,183 @@
             }, 3000);
         }
         
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            };
+        }
+        
+        // ========== STATS FUNCTIONS ==========
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats', { headers: getAuthHeaders() });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('totalUsers').innerText = data.stats.totalUsers || 0;
+                    document.getElementById('activeUsers').innerText = data.stats.activeUsers || 0;
+                    document.getElementById('totalPrompts').innerText = data.stats.totalPrompts || 0;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        // ========== PROMPT CRUD FUNCTIONS ==========
+        async function loadPrompts() {
+            try {
+                const response = await fetch('/api/admin/prompts', { headers: getAuthHeaders() });
+                const data = await response.json();
+                if (data.success && data.prompts) {
+                    const tbody = document.getElementById('promptsTableBody');
+                    if (data.prompts.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-white/50">No prompts found</td></tr>';
+                    } else {
+                        tbody.innerHTML = data.prompts.map(p => `
+                            <tr>
+                                <td class="max-w-[150px] truncate">${escapeHtml(p.title)}</td>
+                                <td><span class="glass px-2 py-1 rounded-full text-xs">${escapeHtml(p.category)}</span></td>
+                                <td class="max-w-[250px] truncate text-white/70">${escapeHtml((p.prompt || '').substring(0, 80))}...</td>
+                                <td>
+                                    <button onclick="editPrompt('${p._id}', '${escapeHtml(p.title)}', '${escapeHtml(p.category)}', '${escapeHtml(p.prompt).replace(/'/g, "\\'")}', '${escapeHtml(p.imageUrl || '')}')" class="action-btn text-blue-400 mr-3"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deletePrompt('${p._id}')" class="action-btn text-red-400"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading prompts:', error);
+                showToast('Failed to load prompts', true);
+            }
+        }
+        
+        async function addPrompt() {
+            const title = document.getElementById('newTitle').value.trim();
+            const category = document.getElementById('newCategory').value;
+            const prompt = document.getElementById('newPrompt').value.trim();
+            const imageUrl = document.getElementById('newImageUrl').value.trim();
+            
+            if (!title || !prompt) {
+                showToast('Title and Prompt are required!', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/prompts', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ title, category, prompt, imageUrl })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('✅ Prompt added successfully!');
+                    document.getElementById('newTitle').value = '';
+                    document.getElementById('newPrompt').value = '';
+                    document.getElementById('newImageUrl').value = '';
+                    loadPrompts();
+                    loadStats();
+                } else {
+                    showToast(data.error || 'Failed to add prompt', true);
+                }
+            } catch (error) {
+                console.error('Error adding prompt:', error);
+                showToast('Network error', true);
+            }
+        }
+        
+        function editPrompt(id, title, category, prompt, imageUrl) {
+            const newTitle = prompt('Edit Title:', title);
+            if (newTitle === null) return;
+            const newCategory = prompt('Edit Category:', category);
+            if (newCategory === null) return;
+            const newPrompt = prompt('Edit Prompt Text:', prompt);
+            if (newPrompt === null) return;
+            const newImageUrl = prompt('Edit Image URL:', imageUrl);
+            
+            updatePrompt(id, newTitle, newCategory, newPrompt, newImageUrl);
+        }
+        
+        async function updatePrompt(id, title, category, prompt, imageUrl) {
+            try {
+                const response = await fetch(`/api/admin/prompts/${id}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ title, category, prompt, imageUrl })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('✅ Prompt updated successfully!');
+                    loadPrompts();
+                } else {
+                    showToast(data.error || 'Failed to update prompt', true);
+                }
+            } catch (error) {
+                console.error('Error updating prompt:', error);
+                showToast('Network error', true);
+            }
+        }
+        
+        async function deletePrompt(id) {
+            if (!confirm('Are you sure you want to delete this prompt?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/prompts/${id}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('✅ Prompt deleted successfully!');
+                    loadPrompts();
+                    loadStats();
+                } else {
+                    showToast(data.error || 'Failed to delete prompt', true);
+                }
+            } catch (error) {
+                console.error('Error deleting prompt:', error);
+                showToast('Network error', true);
+            }
+        }
+        
+        // ========== BROADCAST FUNCTION ==========
+        async function sendBroadcast() {
+            const message = document.getElementById('broadcastMessage').value.trim();
+            if (!message) {
+                showToast('Please enter a message', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/broadcast', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('📡 Alert sent to all users!');
+                    document.getElementById('broadcastMessage').value = '';
+                } else {
+                    showToast(data.error || 'Failed to send alert', true);
+                }
+            } catch (error) {
+                console.error('Error sending broadcast:', error);
+                showToast('Network error', true);
+            }
+        }
+        
+        async function refreshAllData() {
+            showToast('🔄 Refreshing data...');
+            await Promise.all([loadStats(), loadPrompts()]);
+            showToast('✅ Data refreshed!');
+        }
+        
+        // ========== AUTH FUNCTIONS ==========
         async function adminLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -161,6 +489,9 @@
                     document.getElementById('loginEmail').value = '';
                     document.getElementById('loginPassword').value = '';
                     errorDiv.classList.add('hidden');
+                    
+                    loadStats();
+                    loadPrompts();
                     showToast(`Welcome, ${data.admin.email}!`);
                 } else {
                     errorDiv.textContent = data.error || 'Login failed';
@@ -196,10 +527,7 @@
             try {
                 const response = await fetch('/api/admin/change-password', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${adminToken}`
-                    },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ currentPassword, newPassword })
                 });
                 
@@ -207,13 +535,10 @@
                 
                 if (data.success) {
                     showToast('✅ Password changed successfully! Please login again.');
-                    
-                    // Clear form
                     document.getElementById('currentPassword').value = '';
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = '';
                     
-                    // Logout after 2 seconds
                     setTimeout(() => {
                         adminLogout();
                     }, 2000);
@@ -250,6 +575,8 @@
                     document.getElementById('adminEmailDisplay').textContent = data.admin.email;
                     document.getElementById('loginCard').classList.add('hidden');
                     document.getElementById('dashboardCard').classList.remove('hidden');
+                    loadStats();
+                    loadPrompts();
                 } else {
                     localStorage.removeItem('adminToken');
                 }
@@ -257,6 +584,13 @@
                 console.error('Session check error:', error);
                 localStorage.removeItem('adminToken');
             }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         document.addEventListener('DOMContentLoaded', checkAdminSession);

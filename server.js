@@ -208,7 +208,91 @@ app.post('/api/prompt/like', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+// ========== SUPER ADMIN API ROUTES ==========
+// (Add these after your existing routes)
 
+// GET /api/admin/stats - Dashboard analytics
+app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const activeUsers = await User.countDocuments({ lastLogin: { $gte: twentyFourHoursAgo } });
+        const totalPrompts = await Prompt.countDocuments();
+        
+        res.json({ 
+            success: true, 
+            stats: { totalUsers, activeUsers, totalPrompts }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// GET /api/admin/prompts - Fetch all prompts
+app.get('/api/admin/prompts', authenticateAdmin, async (req, res) => {
+    try {
+        const prompts = await Prompt.find().sort({ createdAt: -1 }).lean();
+        res.json({ success: true, prompts });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST /api/admin/prompts - Add new prompt
+app.post('/api/admin/prompts', authenticateAdmin, async (req, res) => {
+    try {
+        const { title, category, prompt, imageUrl } = req.body;
+        if (!title || !prompt) {
+            return res.status(400).json({ success: false, error: 'Title and prompt required' });
+        }
+        const newPrompt = new Prompt({ title, category, prompt, imageUrl });
+        await newPrompt.save();
+        res.json({ success: true, prompt: newPrompt });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// PUT /api/admin/prompts/:id - Update prompt
+app.put('/api/admin/prompts/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { title, category, prompt, imageUrl } = req.body;
+        const updated = await Prompt.findByIdAndUpdate(
+            req.params.id,
+            { title, category, prompt, imageUrl },
+            { new: true }
+        );
+        res.json({ success: true, prompt: updated });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// DELETE /api/admin/prompts/:id - Delete prompt
+app.delete('/api/admin/prompts/:id', authenticateAdmin, async (req, res) => {
+    try {
+        await Prompt.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST /api/admin/broadcast - Send alert to users
+app.post('/api/admin/broadcast', authenticateAdmin, async (req, res) => {
+    try {
+        const { message } = req.body;
+        if (!message) {
+            return res.status(400).json({ success: false, error: 'Message required' });
+        }
+        // Store broadcast in database (optional)
+        await Broadcast.create({ message, sentBy: req.admin.email });
+        console.log(`📡 Broadcast sent: ${message}`);
+        res.json({ success: true, message: 'Alert sent successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 // ========== START SERVER ==========
 async function startServer() {
     await initializeDefaultAdmin();
