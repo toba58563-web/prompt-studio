@@ -7,156 +7,259 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .toast-show {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
-<body class="min-h-screen p-6">
-    <div class="max-w-2xl mx-auto">
-        <!-- Header -->
-        <div class="glass rounded-2xl p-6 mb-6">
-            <div class="flex items-center gap-3 mb-4">
-                <i class="fas fa-lock text-purple-400 text-2xl"></i>
-                <h1 class="text-white text-2xl font-bold">Admin Panel</h1>
+<body class="flex items-center justify-center p-4 min-h-screen">
+    <div class="max-w-md w-full">
+        <!-- Login Card -->
+        <div id="loginCard" class="glass p-8">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-shield-alt text-white text-3xl"></i>
+                </div>
+                <h2 class="text-white text-2xl font-bold">Admin Login</h2>
+                <p class="text-white/60 text-sm mt-1">Enter your credentials</p>
             </div>
-            <p class="text-white/60 text-sm">Add new prompts to the database</p>
+            
+            <input type="email" id="loginEmail" placeholder="Admin Email" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mb-3">
+            <input type="password" id="loginPassword" placeholder="Password" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mb-4">
+            <button onclick="adminLogin()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-3 rounded-xl font-semibold text-white transition-all">
+                <i class="fas fa-sign-in-alt mr-2"></i> Login
+            </button>
+            <div id="loginError" class="mt-4 text-red-400 text-sm text-center hidden"></div>
         </div>
 
-        <!-- Login Form -->
-        <div id="loginForm" class="glass rounded-2xl p-6">
-            <div class="mb-4">
-                <label class="text-white block mb-2">Admin Password</label>
-                <input type="password" id="adminPassword" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="Enter admin password">
+        <!-- Dashboard Card (After Login) -->
+        <div id="dashboardCard" class="glass p-8 hidden">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-crown text-white text-3xl"></i>
+                </div>
+                <h2 class="text-white text-2xl font-bold">Admin Dashboard</h2>
+                <p id="adminEmailDisplay" class="text-white/60 text-sm mt-1">admin@promptstudio.com</p>
             </div>
-            <button onclick="login()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold">Login</button>
+            
+            <!-- Change Password Section -->
+            <div class="glass-card p-5 mb-4">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fas fa-key text-yellow-400 text-lg"></i>
+                    <h3 class="text-white font-semibold text-lg">Change Password</h3>
+                </div>
+                <input type="password" id="currentPassword" placeholder="Current Password" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mb-3">
+                <input type="password" id="newPassword" placeholder="New Password (min 6 characters)" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mb-3">
+                <input type="password" id="confirmPassword" placeholder="Confirm New Password" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-white/50 mb-4">
+                <button onclick="changePassword()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 py-3 rounded-xl font-semibold text-white transition-all">
+                    <i class="fas fa-save mr-2"></i> Update Password
+                </button>
+            </div>
+            
+            <!-- Logout Button -->
+            <button onclick="adminLogout()" class="w-full bg-red-500/20 hover:bg-red-500/30 py-3 rounded-xl font-semibold text-white/80 transition-all">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </button>
         </div>
+    </div>
 
-        <!-- Add Prompt Form (Hidden initially) -->
-        <div id="addForm" class="glass rounded-2xl p-6 hidden">
-            <div class="mb-4">
-                <label class="text-white block mb-2">Title</label>
-                <input type="text" id="title" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="e.g., Cyberpunk Samurai">
-            </div>
-            
-            <div class="mb-4">
-                <label class="text-white block mb-2">Category</label>
-                <select id="category" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500">
-                    <option value="Portrait">Portrait</option>
-                    <option value="Cyberpunk">Cyberpunk</option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="Nature">Nature</option>
-                    <option value="Abstract">Abstract</option>
-                    <option value="Architecture">Architecture</option>
-                    <option value="Character">Character</option>
-                    <option value="Sci-Fi">Sci-Fi</option>
-                </select>
-            </div>
-            
-            <div class="mb-4">
-                <label class="text-white block mb-2">Prompt Text</label>
-                <textarea id="prompt" rows="5" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="Enter the full prompt..."></textarea>
-            </div>
-            
-            <div class="mb-4">
-                <label class="text-white block mb-2">Image URL (Optional)</label>
-                <input type="text" id="imageUrl" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-500" placeholder="https://picsum.photos/400/300">
-            </div>
-            
-            <button onclick="addPrompt()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold mb-3">
-                <i class="fas fa-plus mr-2"></i> Add Prompt
-            </button>
-            
-            <button onclick="logout()" class="w-full bg-white/10 text-white/80 py-2 rounded-xl font-semibold">
-                Logout
-            </button>
-            
-            <div id="message" class="mt-4 text-center text-sm"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 hidden">
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMsg">Success!</span>
         </div>
     </div>
 
     <script>
-        let adminKey = '';
-
-        async function login() {
-            const password = document.getElementById('adminPassword').value;
-            adminKey = password;
+        let adminToken = null;
+        
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastDiv = toast.querySelector('div');
             
-            // Verify by trying to fetch stats
-            try {
-                const res = await fetch('/api/stats');
-                if (res.ok) {
-                    // Show add form
-                    document.getElementById('loginForm').classList.add('hidden');
-                    document.getElementById('addForm').classList.remove('hidden');
-                    showMessage('✅ Login successful!', 'text-green-400');
-                    loadStats();
-                } else {
-                    showMessage('❌ Invalid password', 'text-red-400');
-                }
-            } catch (error) {
-                showMessage('❌ Connection error', 'text-red-400');
+            toastMsg.textContent = message;
+            
+            if (isError) {
+                toastDiv.className = 'bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
+            } else {
+                toastDiv.className = 'bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
             }
-        }
-
-        async function addPrompt() {
-            const title = document.getElementById('title').value;
-            const category = document.getElementById('category').value;
-            const prompt = document.getElementById('prompt').value;
-            const imageUrl = document.getElementById('imageUrl').value;
             
-            if (!title || !prompt) {
-                showMessage('❌ Title and Prompt are required!', 'text-red-400');
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-show');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-show');
+            }, 3000);
+        }
+        
+        async function adminLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!email || !password) {
+                errorDiv.textContent = 'Please enter email and password';
+                errorDiv.classList.remove('hidden');
                 return;
             }
             
             try {
-                const res = await fetch('/api/admin/prompts', {
+                const response = await fetch('/api/admin/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, category, prompt, imageUrl, adminKey })
+                    body: JSON.stringify({ email, password })
                 });
                 
-                const data = await res.json();
+                const data = await response.json();
+                
                 if (data.success) {
-                    showMessage('✅ Prompt added successfully!', 'text-green-400');
-                    clearForm();
+                    adminToken = data.token;
+                    localStorage.setItem('adminToken', adminToken);
+                    
+                    document.getElementById('adminEmailDisplay').textContent = data.admin.email;
+                    document.getElementById('loginCard').classList.add('hidden');
+                    document.getElementById('dashboardCard').classList.remove('hidden');
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                    errorDiv.classList.add('hidden');
+                    showToast(`Welcome, ${data.admin.email}!`);
                 } else {
-                    showMessage('❌ ' + data.error, 'text-red-400');
+                    errorDiv.textContent = data.error || 'Login failed';
+                    errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
-                showMessage('❌ Error adding prompt', 'text-red-400');
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.classList.remove('hidden');
             }
         }
-
-        async function loadStats() {
+        
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Please fill all password fields', true);
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', true);
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('New password must be at least 6 characters', true);
+                return;
+            }
+            
             try {
-                const res = await fetch('/api/stats');
-                const data = await res.json();
+                const response = await fetch('/api/admin/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                
+                const data = await response.json();
+                
                 if (data.success) {
-                    showMessage(`📊 Total prompts: ${data.stats.totalPrompts}`, 'text-blue-400');
+                    showToast('✅ Password changed successfully! Please login again.');
+                    
+                    // Clear form
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    
+                    // Logout after 2 seconds
+                    setTimeout(() => {
+                        adminLogout();
+                    }, 2000);
+                } else {
+                    showToast(data.error || 'Failed to change password', true);
                 }
-            } catch (error) {}
+            } catch (error) {
+                console.error('Change password error:', error);
+                showToast('Network error. Please try again.', true);
+            }
         }
-
-        function clearForm() {
-            document.getElementById('title').value = '';
-            document.getElementById('prompt').value = '';
-            document.getElementById('imageUrl').value = '';
+        
+        function adminLogout() {
+            adminToken = null;
+            localStorage.removeItem('adminToken');
+            document.getElementById('dashboardCard').classList.add('hidden');
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            showToast('Logged out successfully');
         }
-
-        function logout() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('addForm').classList.add('hidden');
-            document.getElementById('adminPassword').value = '';
-            showMessage('', '');
+        
+        async function checkAdminSession() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/admin/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    adminToken = token;
+                    document.getElementById('adminEmailDisplay').textContent = data.admin.email;
+                    document.getElementById('loginCard').classList.add('hidden');
+                    document.getElementById('dashboardCard').classList.remove('hidden');
+                } else {
+                    localStorage.removeItem('adminToken');
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+                localStorage.removeItem('adminToken');
+            }
         }
-
-        function showMessage(msg, color) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.innerHTML = msg;
-            msgDiv.className = `mt-4 text-center text-sm ${color}`;
-            setTimeout(() => { if (msgDiv.innerHTML === msg) msgDiv.innerHTML = ''; }, 3000);
-        }
+        
+        document.addEventListener('DOMContentLoaded', checkAdminSession);
     </script>
 </body>
 </html>

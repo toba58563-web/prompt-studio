@@ -1,193 +1,223 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const path = require('path');
-const Prompt = require('./models/Prompt');
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// ========== MIDDLEWARE ==========
+app.use(cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
-// MongoDB Connection
+// ========== MONGODB CONNECTION ==========
 const MONGODB_URI = process.env.MONGODB_URI;
-
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => {
-    console.log('✅ MongoDB Connected Successfully!');
-    console.log('📀 Database: prompt_studio');
-})
-.catch((err) => {
-    console.error('❌ MongoDB Connection Error:', err.message);
-    process.exit(1);
+.then(() => console.log('✅ MongoDB Connected Successfully!'))
+.catch(err => console.error('❌ MongoDB Error:', err));
+
+// ========== ADMIN SCHEMA ==========
+const adminSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
 });
 
-// ========== API ROUTES ==========
+const Admin = mongoose.model('Admin', adminSchema);
 
-// Get all prompts (with filters)
-app.get('/api/prompts', async (req, res) => {
+// ========== INITIALIZE DEFAULT ADMIN IF NOT EXISTS ==========
+async function initializeDefaultAdmin() {
     try {
-        const { category, search, limit = 50 } = req.query;
-        let filter = {};
+        const existingAdmin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+        if (!existingAdmin) {
+            const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+            const admin = new Admin({
+                email: process.env.ADMIN_EMAIL,
+                password: hashedPassword
+            });
+            await admin.save();
+            console.log('✅ Default admin created successfully');
+        } else {
+            console.log('✅ Admin already exists');
+        }
+    } catch (error) {
+        console.error('Error creating default admin:', error);
+    }
+}
+
+// ========== AUTH MIDDLEWARE ==========
+const authenticateAdmin = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'No token provided' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const admin = await Admin.findById(decoded.adminId).select('-password');
+        if (!admin) {
+            return res.status(401).json({ success: false, error: 'Admin not found' });
+        }
+        req.admin = admin;
+        next();
+    } catch (error) {
+        console.error('Auth error:', error);
+        res.status(401).json({ success: false, error: 'Invalid or expired token' });
+    }
+};
+
+// ========== ADMIN LOGIN ROUTE ==========
+app.post('/api/admin/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
         
-        if (category && category !== 'All') {
-            filter.category = category;
+        // Find admin by email
+        const admin = await Admin.findOne({ email });
+        if (!admin) {
+            return res.status(401).json({ success: false, error: 'Invalid credentials' });
         }
         
-        if (search) {
-            filter.$or = [
-                { title: { $regex: search, $options: 'i' } },
-                { prompt: { $regex: search, $options: 'i' } }
-            ];
+        // Check password
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ success: false, error: 'Invalid credentials' });
         }
         
-        const prompts = await Prompt.find(filter)
-            .sort({ createdAt: -1 })
-            .limit(parseInt(limit));
-        
-        res.json({ success: true, prompts });
-    } catch (error) {
-        console.error('Error fetching prompts:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get single prompt
-app.get('/api/prompt/:id', async (req, res) => {
-    try {
-        const prompt = await Prompt.findById(req.params.id);
-        if (!prompt) {
-            return res.status(404).json({ success: false, error: 'Prompt not found' });
-        }
-        res.json({ success: true, prompt });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Add new prompt (Admin)
-app.post('/api/admin/prompts', async (req, res) => {
-    try {
-        const { title, category, prompt, imageUrl, adminKey } = req.body;
-        
-        // Simple admin authentication
-        if (adminKey !== process.env.ADMIN_PASSWORD) {
-            return res.status(401).json({ success: false, error: 'Unauthorized' });
-        }
-        
-        const newPrompt = new Prompt({
-            title,
-            category,
-            prompt,
-            imageUrl: imageUrl || 'https://picsum.photos/400/300'
-        });
-        
-        await newPrompt.save();
-        res.json({ success: true, prompt: newPrompt });
-    } catch (error) {
-        console.error('Error adding prompt:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Update prompt views
-app.post('/api/prompt/view', async (req, res) => {
-    try {
-        const { id } = req.body;
-        await Prompt.findByIdAndUpdate(id, { $inc: { views: 1 } });
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Like prompt
-app.post('/api/prompt/like', async (req, res) => {
-    try {
-        const { id } = req.body;
-        await Prompt.findByIdAndUpdate(id, { $inc: { likes: 1 } });
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get categories stats
-app.get('/api/categories', async (req, res) => {
-    try {
-        const categories = await Prompt.aggregate([
-            { $group: { _id: '$category', count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
-        ]);
-        
-        const categoryList = ['All', ...categories.map(c => c._id)];
-        res.json({ success: true, categories: categoryList, stats: categories });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get total stats
-app.get('/api/stats', async (req, res) => {
-    try {
-        const totalPrompts = await Prompt.countDocuments();
-        const totalLikes = await Prompt.aggregate([{ $group: { _id: null, total: { $sum: '$likes' } } }]);
-        const totalViews = await Prompt.aggregate([{ $group: { _id: null, total: { $sum: '$views' } } }]);
+        // Generate JWT token
+        const token = jwt.sign(
+            { adminId: admin._id, email: admin.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
         
         res.json({
             success: true,
-            stats: {
-                totalPrompts,
-                totalLikes: totalLikes[0]?.total || 0,
-                totalViews: totalViews[0]?.total || 0
+            token,
+            admin: {
+                email: admin.email
             }
         });
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ success: false, error: 'Login failed' });
+    }
+});
+
+// ========== CHANGE PASSWORD ROUTE ==========
+app.post('/api/admin/change-password', authenticateAdmin, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Current password and new password are required' 
+            });
+        }
+        
+        if (newPassword.length < 6) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'New password must be at least 6 characters long' 
+            });
+        }
+        
+        // Get admin from database with password
+        const admin = await Admin.findById(req.admin._id);
+        if (!admin) {
+            return res.status(404).json({ success: false, error: 'Admin not found' });
+        }
+        
+        // Verify current password
+        const isPasswordValid = await bcrypt.compare(currentPassword, admin.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+        }
+        
+        // Hash new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        
+        // Update password
+        admin.password = hashedNewPassword;
+        admin.updatedAt = new Date();
+        await admin.save();
+        
+        console.log('✅ Admin password changed successfully');
+        
+        res.json({ 
+            success: true, 
+            message: 'Password changed successfully' 
+        });
+        
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ success: false, error: 'Failed to change password' });
+    }
+});
+
+// ========== VERIFY TOKEN ROUTE ==========
+app.get('/api/admin/verify', authenticateAdmin, async (req, res) => {
+    res.json({ 
+        success: true, 
+        admin: { email: req.admin.email } 
+    });
+});
+
+// ========== PROMPT ROUTES ==========
+const promptSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    category: { type: String, required: true },
+    prompt: { type: String, required: true },
+    imageUrl: { type: String, default: 'https://picsum.photos/400/300' },
+    likes: { type: Number, default: 0 },
+    views: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Prompt = mongoose.model('Prompt', promptSchema);
+
+app.get('/api/prompts', async (req, res) => {
+    try {
+        const prompts = await Prompt.find().sort({ createdAt: -1 }).lean();
+        res.json({ success: true, prompts });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Serve HTML files
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-// Google Auth API
-app.post('/api/auth/google', async (req, res) => {
+app.post('/api/prompt/like', async (req, res) => {
     try {
-        const { token } = req.body;
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
-        const payload = ticket.getPayload();
-        // Abhi ke liye success bhej rahe hain
-        res.json({ success: true, user: payload });
+        const { id } = req.body;
+        const prompt = await Prompt.findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true });
+        res.json({ success: true, likes: prompt.likes });
     } catch (error) {
-        console.error('Google Auth Error:', error);
-        res.status(500).json({ success: false, error: 'Auth failed' });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
+// ========== START SERVER ==========
+async function startServer() {
+    await initializeDefaultAdmin();
+    app.listen(PORT, () => {
+        console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+        console.log(`📱 Admin Login: http://localhost:${PORT}/admin.html`);
+        console.log(`🔐 Default Admin: ${process.env.ADMIN_EMAIL}`);
+        console.log(`✅ Password change API: POST /api/admin/change-password`);
+    });
+}
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📱 Main App: http://localhost:${PORT}`);
-    console.log(`🔐 Admin Panel: http://localhost:${PORT}/admin`);
-    console.log(`\n⚡ Admin Credentials:`);
-    console.log(`   Password: ${process.env.ADMIN_PASSWORD}`);
-});
+startServer();
