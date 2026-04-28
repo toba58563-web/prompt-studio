@@ -188,6 +188,14 @@ const promptSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+// Broadcast Schema (Models section mein add karo)
+const broadcastSchema = new mongoose.Schema({
+    message: { type: String, required: true },
+    sentBy: { type: String, default: 'admin' },
+    createdAt: { type: Date, default: Date.now }
+});
+const Broadcast = mongoose.model('Broadcast', broadcastSchema);
+
 const Prompt = mongoose.model('Prompt', promptSchema);
 
 app.get('/api/prompts', async (req, res) => {
