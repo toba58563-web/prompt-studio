@@ -15,21 +15,11 @@
                         'slide-up': 'slideUp 0.3s ease-out',
                         'slide-in': 'slideIn 0.3s ease-out',
                         'spin-slow': 'spin 0.8s linear infinite',
-                        'shimmer': 'shimmer 2s infinite',
-                        'scroll-reveal': 'scrollReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                         slideIn: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(0)' } },
-                        shimmer: {
-                            '0%': { backgroundPosition: '-1000px 0' },
-                            '100%': { backgroundPosition: '1000px 0' }
-                        },
-                        scrollReveal: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        }
                     },
                 },
             },
@@ -65,8 +55,12 @@
             backdrop-filter: blur(12px);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
+            /* ========== 60FPS PERFORMANCE OPTIMIZATIONS ========== */
+            will-change: transform, opacity;
+            content-visibility: auto;
+            contain: layout style paint;
         }
         
         .glass-card:hover {
@@ -76,12 +70,12 @@
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
         
-        /* Scroll Reveal Elements - Initially Hidden */
+        /* ========== OPTIMIZED SCROLL REVEAL ANIMATION ========== */
         .reveal-card {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform, opacity;
+            transform: translateY(25px);
+            transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: opacity, transform;
         }
         
         .reveal-card.revealed {
@@ -89,17 +83,19 @@
             transform: translateY(0);
         }
         
-        /* Staggered Animation Delay Classes - Optimized */
-        .reveal-card[data-delay="0"] { transition-delay: 0s; }
-        .reveal-card[data-delay="1"] { transition-delay: 0.03s; }
-        .reveal-card[data-delay="2"] { transition-delay: 0.06s; }
-        .reveal-card[data-delay="3"] { transition-delay: 0.09s; }
-        .reveal-card[data-delay="4"] { transition-delay: 0.12s; }
-        .reveal-card[data-delay="5"] { transition-delay: 0.15s; }
-        .reveal-card[data-delay="6"] { transition-delay: 0.18s; }
-        .reveal-card[data-delay="7"] { transition-delay: 0.21s; }
+        /* ========== STAGGERED ENTRANCE DELAYS ========== */
+        .reveal-card.stagger-0 { transition-delay: 0s; }
+        .reveal-card.stagger-1 { transition-delay: 0.04s; }
+        .reveal-card.stagger-2 { transition-delay: 0.08s; }
+        .reveal-card.stagger-3 { transition-delay: 0.12s; }
+        .reveal-card.stagger-4 { transition-delay: 0.16s; }
+        .reveal-card.stagger-5 { transition-delay: 0.2s; }
+        .reveal-card.stagger-6 { transition-delay: 0.24s; }
+        .reveal-card.stagger-7 { transition-delay: 0.28s; }
+        .reveal-card.stagger-8 { transition-delay: 0.32s; }
+        .reveal-card.stagger-9 { transition-delay: 0.36s; }
         
-        /* Enhanced Skeleton Loader with Shimmer */
+        /* Enhanced Skeleton Loader */
         .skeleton {
             background: linear-gradient(110deg, 
                 rgba(255, 255, 255, 0.05) 0%, 
@@ -112,24 +108,38 @@
             border-radius: 20px;
             position: relative;
             overflow: hidden;
+            contain: strict;
         }
         
         @keyframes skeletonShimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
         
-        /* Image loading shimmer effect */
+        /* Image loading optimization */
+        .image-container {
+            aspect-ratio: 2 / 3;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+            contain: layout paint;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+            will-change: transform;
+        }
+        
         .image-container.loading {
             position: relative;
             background: linear-gradient(110deg, 
-                rgba(255, 255, 255, 0.05) 0%, 
-                rgba(255, 255, 255, 0.12) 50%, 
-                rgba(255, 255, 255, 0.05) 100%);
+                rgba(255, 255, 255, 0.03) 0%, 
+                rgba(255, 255, 255, 0.08) 50%, 
+                rgba(255, 255, 255, 0.03) 100%);
             background-size: 200% 100%;
             animation: imageShimmer 1.5s ease-in-out infinite;
         }
@@ -139,10 +149,6 @@
             100% { background-position: -200% 0; }
         }
         
-        .image-container img {
-            transition: opacity 0.3s ease;
-        }
-        
         .image-container img.loaded {
             opacity: 1;
         }
@@ -150,6 +156,12 @@
         /* Smooth scroll behavior */
         html {
             scroll-behavior: smooth;
+        }
+        
+        /* Prevent layout shift during category filter */
+        #promptsGrid {
+            min-height: 400px;
+            transition: all 0.2s ease;
         }
         
         .sidebar-glass {
@@ -295,20 +307,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .image-container {
-            aspect-ratio: 2 / 3;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
         }
         
         .glass-card:hover .image-container img {
@@ -798,7 +796,7 @@
             pendingPromptText = null;
             stopAdTimer();
             const timerDisplay = document.getElementById('adTimer');
-            if (timerDisplay) timerDisplay.textContent = '10s';
+            if (timerDisplay) timerDisplay.textContent = '15s';
             document.getElementById('adModal').classList.add('hidden');
             const closeBtn = document.getElementById('closeAdBtn');
             closeBtn.disabled = true;
@@ -844,16 +842,26 @@
             if (scrollObserver) scrollObserver.disconnect();
             const revealElements = document.querySelectorAll('.glass-card');
             scrollObserver = new IntersectionObserver((entries) => {
-                entries.forEach((entry, idx) => {
+                entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        const delay = Math.min(Math.floor(idx / 2) % 8, 7);
-                        entry.target.style.transitionDelay = `${delay * 0.03}s`;
                         entry.target.classList.add('revealed');
                         scrollObserver.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
+            }, { 
+                threshold: 0.1, 
+                rootMargin: '0px 0px 30px 0px' 
+            });
             revealElements.forEach(el => scrollObserver.observe(el));
+        }
+
+        // ========== ADD STAGGER DELAYS TO CARDS ==========
+        function addStaggerDelays() {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach((card, index) => {
+                const staggerIndex = Math.min(index % 10, 9);
+                card.classList.add(`stagger-${staggerIndex}`);
+            });
         }
 
         // ========== OPTIMIZED IMAGE LOADING ==========
@@ -988,7 +996,7 @@
             }
         }
 
-        // ========== FIXED: FETCH PROMPTS ==========
+        // ========== FETCH PROMPTS ==========
         async function fetchPrompts() {
             try {
                 const grid = document.getElementById('promptsGrid');
@@ -1010,7 +1018,7 @@
             }
         }
 
-        // ========== FIXED: RENDER PROMPTS WITH PROPER REVEAL ==========
+        // ========== RENDER PROMPTS WITH STAGGERED ANIMATION ==========
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
@@ -1019,7 +1027,7 @@
                 return; 
             }
             grid.innerHTML = prompts.map((prompt, index) => `
-                <div class="glass-card transition-all duration-300 reveal-card" data-delay="${index % 8}">
+                <div class="glass-card transition-all duration-300 reveal-card" data-index="${index}">
                     <div class="image-container" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/600'}')">
                         <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" 
                              alt="${escapeHtml(prompt.title)}" 
@@ -1050,13 +1058,18 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Apply stagger delays to new cards
+            addStaggerDelays();
+            
+            // Initialize scroll reveal with delay for smoother animation
             setTimeout(() => {
                 initOptimizedScrollReveal();
                 setupOptimizedImageLoading();
-            }, 100);
+            }, 50);
         }
 
-        // ========== FIXED: FILTER PROMPTS AND RENDER ==========
+        // ========== INSTANT FILTER (NO LAYOUT SHIFT) ==========
         function filterPromptsAndRender() {
             let filtered = [...currentPrompts];
             if (currentCategory !== 'All') {
@@ -1066,15 +1079,21 @@
                 const searchLower = currentSearchTerm.toLowerCase();
                 filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.prompt || '').toLowerCase().includes(searchLower));
             }
-            renderPrompts(filtered);
-            const countElem = document.getElementById('promptCount');
-            if (countElem) countElem.textContent = `${filtered.length}`;
+            
+            // Use requestAnimationFrame for smooth UI update
+            requestAnimationFrame(() => {
+                renderPrompts(filtered);
+                const countElem = document.getElementById('promptCount');
+                if (countElem) countElem.textContent = `${filtered.length}`;
+            });
         }
 
-        // ========== FIXED: FILTER CATEGORY (IMMEDIATE UPDATE) ==========
+        // ========== FILTER CATEGORY (INSTANT UPDATE) ==========
         function filterCategory(category) {
             currentCategory = category;
             filterPromptsAndRender();
+            
+            // Update active button styles
             document.querySelectorAll('[data-category-btn]').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg');
                 btn.classList.add('glass', 'text-white/80');
@@ -1089,7 +1108,7 @@
         // ========== RENDER CATEGORIES ==========
         async function renderCategories() {
             try {
-                let categories = ['All', 'Portrait', 'Nature', 'Cinematic', 'Cyberpunk', 'Fantasy', 'Abstract'];
+                let categories = ['All', 'Portrait', 'Trending', 'Nature', 'Cinematic', 'Fantasy', 'Birthday'];
                 const container = document.getElementById('categoriesContainer');
                 if (!container) return;
                 container.innerHTML = categories.map(cat => `<button data-category-btn="${cat}" onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">${cat}</button>`).join('');
