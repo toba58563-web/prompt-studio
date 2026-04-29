@@ -81,6 +81,7 @@
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
         }
         
         .reveal-card.revealed {
@@ -88,15 +89,15 @@
             transform: translateY(0);
         }
         
-        /* Staggered Animation Delay Classes */
-        .reveal-card[data-delay="1"] { transition-delay: 0.05s; }
-        .reveal-card[data-delay="2"] { transition-delay: 0.1s; }
-        .reveal-card[data-delay="3"] { transition-delay: 0.15s; }
-        .reveal-card[data-delay="4"] { transition-delay: 0.2s; }
-        .reveal-card[data-delay="5"] { transition-delay: 0.25s; }
-        .reveal-card[data-delay="6"] { transition-delay: 0.3s; }
-        .reveal-card[data-delay="7"] { transition-delay: 0.35s; }
-        .reveal-card[data-delay="8"] { transition-delay: 0.4s; }
+        /* Staggered Animation Delay Classes - Optimized */
+        .reveal-card[data-delay="0"] { transition-delay: 0s; }
+        .reveal-card[data-delay="1"] { transition-delay: 0.03s; }
+        .reveal-card[data-delay="2"] { transition-delay: 0.06s; }
+        .reveal-card[data-delay="3"] { transition-delay: 0.09s; }
+        .reveal-card[data-delay="4"] { transition-delay: 0.12s; }
+        .reveal-card[data-delay="5"] { transition-delay: 0.15s; }
+        .reveal-card[data-delay="6"] { transition-delay: 0.18s; }
+        .reveal-card[data-delay="7"] { transition-delay: 0.21s; }
         
         /* Enhanced Skeleton Loader with Shimmer */
         .skeleton {
@@ -616,7 +617,7 @@
         </div>
     </div>
 
-    <!-- ========== UPDATED: Monetag Vignette Modal ========== -->
+    <!-- Monetag Vignette Modal -->
     <div id="adModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center hidden">
         <div class="glass-card p-6 max-w-md mx-4 w-full modal-animate">
             <div class="text-center monetag-modal-content">
@@ -625,14 +626,8 @@
                 </div>
                 <h3 class="text-white text-2xl font-bold mb-2">Watch Ad to Copy</h3>
                 <p class="text-white/70 mb-4">Please watch the ad below to unlock copy</p>
-                
-                <!-- Timer Display -->
                 <div id="adTimer" class="timer-text text-4xl font-bold text-yellow-400 mb-4">15s</div>
-                
-                <!-- Monetag Vignette Script Container -->
                 <div id="monetagScriptContainer" class="mb-4"></div>
-                
-                <!-- Close Button (Disabled until timer finishes) -->
                 <button id="closeAdBtn" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold py-3 rounded-xl transition-all close-btn-disabled" disabled>
                     Please wait 15 seconds...
                 </button>
@@ -673,50 +668,36 @@
         let remainingSeconds = 15;
         let isAdCompleted = false;
         let monetagScriptLoaded = false;
+        let currentPrompts = [];
+        let currentCategory = 'All';
+        let currentSearchTerm = '';
+        let scrollObserver = null;
         
         // Kodular ke Back Button ke liye Main Function
         function handleBackPress() {
-            // 1. Sidebar check
             const sidebar = document.getElementById('sidebarMenu');
             if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.add('-translate-x-full'); 
                 return;
             }
-
-            // 2. Image Modal check
             const imageModal = document.getElementById('imageModal');
             if (imageModal && imageModal.classList.contains('active')) {
                 imageModal.classList.remove('active');
                 return;
             }
-
-            // 3. Exit Modal dikhao agar kuch nahi khula hai
             openExitPopup();
         }
 
         function openExitPopup() {
             const exitModal = document.getElementById('exitModal');
-            if (exitModal) {
-                exitModal.classList.remove('hidden');
-            }
+            if (exitModal) exitModal.classList.remove('hidden');
         }
 
-        // Exit Modal ke buttons ko activate karo
         document.addEventListener('DOMContentLoaded', () => {
             const cancelBtn = document.getElementById('cancelExitBtn');
             const confirmBtn = document.getElementById('confirmExitBtn');
-
-            if (cancelBtn) {
-                cancelBtn.onclick = () => {
-                    document.getElementById('exitModal').classList.add('hidden');
-                };
-            }
-
-            if (confirmBtn) {
-                confirmBtn.onclick = () => {
-                    window.close(); // App close karne ke liye
-                };
-            }
+            if (cancelBtn) cancelBtn.onclick = () => document.getElementById('exitModal').classList.add('hidden');
+            if (confirmBtn) confirmBtn.onclick = () => window.close();
         });
 
         // ========== TOAST FUNCTIONS ==========
@@ -724,9 +705,7 @@
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMessage');
             const toastIcon = toast.querySelector('i');
-            
             toastMsg.textContent = message;
-            
             if (isError) {
                 toastIcon.className = 'fas fa-exclamation-circle mr-2';
                 toast.querySelector('div').className = 'bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
@@ -734,7 +713,6 @@
                 toastIcon.className = 'fas fa-spinner fa-spin mr-2';
                 toast.querySelector('div').className = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl';
             }
-            
             toast.classList.remove('hidden');
             toast.classList.add('toast-show');
             setTimeout(() => {
@@ -760,20 +738,13 @@
         // ========== LOAD MONETAG VIGNETTE SCRIPT ==========
         function loadMonetagVignette() {
             if (monetagScriptLoaded) return;
-            
             const container = document.getElementById('monetagScriptContainer');
             if (!container) return;
-            
-            // Clear previous content
             container.innerHTML = '';
-            
-            // Create and inject Monetag Vignette script
             const script = document.createElement('script');
             script.innerHTML = `(function(s){s.dataset.zone='10920892',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
             container.appendChild(script);
-            
             monetagScriptLoaded = true;
-            console.log('Monetag Vignette script loaded');
         }
 
         // ========== START TIMER ==========
@@ -782,140 +753,81 @@
             isAdCompleted = false;
             const timerDisplay = document.getElementById('adTimer');
             const closeBtn = document.getElementById('closeAdBtn');
-            
-            // Reset close button state
             closeBtn.disabled = true;
             closeBtn.innerHTML = 'Please wait 15 seconds...';
             closeBtn.classList.add('close-btn-disabled');
-            
-            // Clear any existing interval
             if (adTimerInterval) clearInterval(adTimerInterval);
-            
-            // Start new timer
             adTimerInterval = setInterval(() => {
                 remainingSeconds--;
-                
-                if (timerDisplay) {
-                    timerDisplay.textContent = `${remainingSeconds}s`;
-                }
-                
+                if (timerDisplay) timerDisplay.textContent = `${remainingSeconds}s`;
                 if (remainingSeconds <= 0) {
                     clearInterval(adTimerInterval);
                     adTimerInterval = null;
                     isAdCompleted = true;
-                    
-                    // Enable close button
                     closeBtn.disabled = false;
                     closeBtn.innerHTML = '✓ Close & Copy Prompt';
                     closeBtn.classList.remove('close-btn-disabled');
-                    closeBtn.classList.add('bg-gradient-to-r', 'from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
-                    
-                    console.log('Timer completed, ad ready to close');
+                    closeBtn.classList.add('bg-gradient-to-r', 'from-green-500', 'to-emerald-600');
                 }
             }, 1000);
         }
 
-        // ========== STOP TIMER ==========
-        function stopAdTimer() {
-            if (adTimerInterval) {
-                clearInterval(adTimerInterval);
-                adTimerInterval = null;
-            }
-        }
+        function stopAdTimer() { if (adTimerInterval) { clearInterval(adTimerInterval); adTimerInterval = null; } }
 
         // ========== COPY BUTTON LOGIC ==========
         function handleCopyClick(text, buttonElement) {
             pendingPromptText = text;
             currentCopyButton = buttonElement;
-            
             const originalHTML = buttonElement.innerHTML;
             buttonElement.disabled = true;
             buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
-            
             showToast('⏳ Loading ad...', false, 1500);
-            
             setTimeout(() => {
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = originalHTML;
-                
-                // Show ad modal and load Monetag script
                 const adModal = document.getElementById('adModal');
                 adModal.classList.remove('hidden');
-                
-                // Load Monetag Vignette script
                 loadMonetagVignette();
-                
-                // Start 15-second timer
                 startAdTimer();
             }, 1500);
         }
 
-        // ========== CLOSE AD MODAL AND COPY ==========
         function closeAdModalAndCopy() {
-            if (!isAdCompleted) {
-                showToast('Please wait for the ad to complete!', true, 2000);
-                return;
-            }
-            
-            // Copy the prompt text
-            if (pendingPromptText) {
-                copyToClipboard(pendingPromptText);
-                pendingPromptText = null;
-            }
-            
-            // Stop timer
+            if (!isAdCompleted) { showToast('Please wait for the ad to complete!', true, 2000); return; }
+            if (pendingPromptText) copyToClipboard(pendingPromptText);
+            pendingPromptText = null;
             stopAdTimer();
-            
-            // Reset timer display
             const timerDisplay = document.getElementById('adTimer');
             if (timerDisplay) timerDisplay.textContent = '10s';
-            
-            // Hide modal
-            const modal = document.getElementById('adModal');
-            modal.classList.add('hidden');
-            
-            // Reset close button
+            document.getElementById('adModal').classList.add('hidden');
             const closeBtn = document.getElementById('closeAdBtn');
             closeBtn.disabled = true;
             closeBtn.innerHTML = 'Please wait 15 seconds...';
             closeBtn.classList.add('close-btn-disabled');
             closeBtn.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-emerald-600');
-            
-            // Reset flag
             isAdCompleted = false;
-            
-            if (currentCopyButton) {
-                currentCopyButton = null;
-            }
+            if (currentCopyButton) currentCopyButton = null;
         }
 
-        // ========== CLOSE AD MODAL WITHOUT COPY (Cancel) ==========
         function closeAdModal() {
             stopAdTimer();
-            
             const timerDisplay = document.getElementById('adTimer');
             if (timerDisplay) timerDisplay.textContent = '15s';
-            
-            const modal = document.getElementById('adModal');
-            modal.classList.add('hidden');
-            
+            document.getElementById('adModal').classList.add('hidden');
             const closeBtn = document.getElementById('closeAdBtn');
             closeBtn.disabled = true;
             closeBtn.innerHTML = 'Please wait 15 seconds...';
             closeBtn.classList.add('close-btn-disabled');
             closeBtn.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-emerald-600');
-            
             pendingPromptText = null;
             currentCopyButton = null;
             isAdCompleted = false;
         }
 
-        // ========== COPY TO CLIPBOARD ==========
         async function copyToClipboard(text) {
             try {
                 await navigator.clipboard.writeText(text);
                 showSuccessToast('✅ Prompt copied to clipboard!', 2000);
-                return true;
             } catch (err) {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
@@ -924,8 +836,46 @@
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
                 showSuccessToast('✅ Prompt copied!', 2000);
-                return true;
             }
+        }
+
+        // ========== OPTIMIZED SCROLL REVEAL WITH INTERSECTION OBSERVER ==========
+        function initOptimizedScrollReveal() {
+            if (scrollObserver) scrollObserver.disconnect();
+            const revealElements = document.querySelectorAll('.glass-card');
+            scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, idx) => {
+                    if (entry.isIntersecting) {
+                        const delay = Math.min(Math.floor(idx / 2) % 8, 7);
+                        entry.target.style.transitionDelay = `${delay * 0.03}s`;
+                        entry.target.classList.add('revealed');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
+            revealElements.forEach(el => scrollObserver.observe(el));
+        }
+
+        // ========== OPTIMIZED IMAGE LOADING ==========
+        function setupOptimizedImageLoading() {
+            const images = document.querySelectorAll('.image-container img');
+            images.forEach(img => {
+                const container = img.closest('.image-container');
+                if (container && img.complete) {
+                    container.classList.remove('loading');
+                    img.classList.add('loaded');
+                } else if (container) {
+                    container.classList.add('loading');
+                    img.addEventListener('load', () => {
+                        container.classList.remove('loading');
+                        img.classList.add('loaded');
+                    });
+                    img.addEventListener('error', () => {
+                        container.classList.remove('loading');
+                        img.src = 'https://picsum.photos/400/600';
+                    });
+                }
+            });
         }
 
         // ========== SPLASH SCREEN ==========
@@ -934,70 +884,6 @@
             splash.classList.add('hide');
             setTimeout(() => { splash.style.display = 'none'; }, 500);
         }, 2000);
-
-        // ========== SCROLL REVEAL ANIMATION WITH INTERSECTION OBSERVER ==========
-        function initScrollReveal() {
-            const revealElements = document.querySelectorAll('.glass-card, .reveal-card');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        // Add delay based on index for staggered effect
-                        const delay = Math.min((index % 8) + 1, 8);
-                        entry.target.style.transitionDelay = `${delay * 0.05}s`;
-                        entry.target.classList.add('revealed');
-                        observer.unobserve(entry.target); // Stop observing once revealed
-                    }
-                });
-            }, {
-                threshold: 0.1, // Trigger when 10% of element is visible
-                rootMargin: '0px 0px -50px 0px' // Slight offset for better timing
-            });
-            
-            // Observe each glass-card
-            revealElements.forEach((el) => {
-                observer.observe(el);
-            });
-        }
-
-        // ========== IMAGE LOADING WITH SKELETON SHIMMER ==========
-        function setupImageLoading() {
-            const images = document.querySelectorAll('.image-container img');
-            
-            images.forEach(img => {
-                const container = img.closest('.image-container');
-                
-                // Add loading class while image loads
-                if (container) {
-                    container.classList.add('loading');
-                }
-                
-                // Handle image load event
-                img.addEventListener('load', () => {
-                    if (container) {
-                        container.classList.remove('loading');
-                        img.classList.add('loaded');
-                    }
-                });
-                
-                // Handle image error
-                img.addEventListener('error', () => {
-                    if (container) {
-                        container.classList.remove('loading');
-                        // Set fallback image
-                        img.src = 'https://picsum.photos/400/600';
-                    }
-                });
-                
-                // If image already loaded
-                if (img.complete) {
-                    if (container) {
-                        container.classList.remove('loading');
-                        img.classList.add('loaded');
-                    }
-                }
-            });
-        }
 
         // ========== MODAL FUNCTIONS ==========
         function isAnyModalOpen() {
@@ -1009,11 +895,7 @@
                    (sidebar && !sidebar.classList.contains('-translate-x-full'));
         }
 
-        function closeAllModals() {
-            closeImageModal();
-            closeAdModal();
-            closeSidebar();
-        }
+        function closeAllModals() { closeImageModal(); closeAdModal(); closeSidebar(); }
 
         function openImageModal(imageUrl) {
             const modal = document.getElementById('imageModal');
@@ -1052,9 +934,8 @@
         function showExitModal() { document.getElementById('exitModal').classList.remove('hidden'); }
         function hideExitModal() { document.getElementById('exitModal').classList.add('hidden'); }
         function exitApp() {
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString('exit');
-            } else { window.close(); window.history.back(); }
+            if (window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString('exit');
+            else { window.close(); window.history.back(); }
             hideExitModal();
         }
 
@@ -1075,7 +956,6 @@
         let touchStartY = 0;
         let isRefreshing = false;
         const REFRESH_THRESHOLD = 100;
-        
         document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
         document.addEventListener('touchmove', (e) => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1108,54 +988,38 @@
             }
         }
 
-        // ========== FETCH PROMPTS ==========
-        let currentPrompts = [], currentCategory = 'All', currentSearchTerm = '';
-
+        // ========== FIXED: FETCH PROMPTS ==========
         async function fetchPrompts() {
             try {
                 const grid = document.getElementById('promptsGrid');
                 if (grid) grid.innerHTML = `<div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>`;
-                
                 const response = await fetch('/api/prompts');
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Failed to fetch prompts');
-                
                 let prompts = [];
                 if (data.prompts) prompts = data.prompts;
                 else if (Array.isArray(data)) prompts = data;
-                
                 currentPrompts = prompts.map(prompt => ({ ...prompt, isLiked: false }));
-                filterPrompts();
                 await renderCategories();
-                
+                filterPromptsAndRender();
                 const countElem = document.getElementById('promptCount');
                 if (countElem) countElem.textContent = `${currentPrompts.length}`;
-                
-                console.log(`✅ Loaded ${currentPrompts.length} prompts`);
-                
-                // Initialize animations after prompts are loaded
-                setTimeout(() => {
-                    initScrollReveal();
-                    setupImageLoading();
-                }, 200);
-                
             } catch (error) { 
                 console.error('Error fetching prompts:', error); 
                 showError('Failed to load prompts.'); 
             }
         }
 
+        // ========== FIXED: RENDER PROMPTS WITH PROPER REVEAL ==========
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
-            
             if (!prompts || prompts.length === 0) { 
                 grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-inbox text-white/40 text-6xl mb-4"></i><p class="text-white/60 text-lg">No prompts found</p></div>`; 
                 return; 
             }
-            
             grid.innerHTML = prompts.map((prompt, index) => `
-                <div class="glass-card transition-all duration-300 animate-fade-in reveal-card" data-delay="${(index % 8) + 1}">
+                <div class="glass-card transition-all duration-300 reveal-card" data-delay="${index % 8}">
                     <div class="image-container" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/600'}')">
                         <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" 
                              alt="${escapeHtml(prompt.title)}" 
@@ -1186,6 +1050,50 @@
                     </div>
                 </div>
             `).join('');
+            setTimeout(() => {
+                initOptimizedScrollReveal();
+                setupOptimizedImageLoading();
+            }, 100);
+        }
+
+        // ========== FIXED: FILTER PROMPTS AND RENDER ==========
+        function filterPromptsAndRender() {
+            let filtered = [...currentPrompts];
+            if (currentCategory !== 'All') {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
+            if (currentSearchTerm.trim()) {
+                const searchLower = currentSearchTerm.toLowerCase();
+                filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.prompt || '').toLowerCase().includes(searchLower));
+            }
+            renderPrompts(filtered);
+            const countElem = document.getElementById('promptCount');
+            if (countElem) countElem.textContent = `${filtered.length}`;
+        }
+
+        // ========== FIXED: FILTER CATEGORY (IMMEDIATE UPDATE) ==========
+        function filterCategory(category) {
+            currentCategory = category;
+            filterPromptsAndRender();
+            document.querySelectorAll('[data-category-btn]').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg');
+                btn.classList.add('glass', 'text-white/80');
+            });
+            const activeBtn = document.querySelector(`[data-category-btn="${category}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('glass', 'text-white/80');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg');
+            }
+        }
+
+        // ========== RENDER CATEGORIES ==========
+        async function renderCategories() {
+            try {
+                let categories = ['All', 'Portrait', 'Nature', 'Cinematic', 'Cyberpunk', 'Fantasy', 'Abstract'];
+                const container = document.getElementById('categoriesContainer');
+                if (!container) return;
+                container.innerHTML = categories.map(cat => `<button data-category-btn="${cat}" onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">${cat}</button>`).join('');
+            } catch (error) { console.error('Error rendering categories:', error); }
         }
 
         async function handleLike(id) {
@@ -1211,47 +1119,19 @@
             }
         }
 
-        function filterPrompts() {
-            let filtered = [...currentPrompts];
-            if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
-            if (currentSearchTerm.trim()) { const searchLower = currentSearchTerm.toLowerCase(); filtered = filtered.filter(p => p.title.toLowerCase().includes(searchLower) || (p.prompt || '').toLowerCase().includes(searchLower)); }
-            renderPrompts(filtered);
-            const countElem = document.getElementById('promptCount');
-            if (countElem) countElem.textContent = `${filtered.length}`;
-        }
-
-        function filterCategory(category) {
-            currentCategory = category;
-            filterPrompts();
-            document.querySelectorAll('[data-category-btn]').forEach(btn => { btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg'); btn.classList.add('glass', 'text-white/80'); });
-            const activeBtn = document.querySelector(`[data-category-btn="${category}"]`);
-            if (activeBtn) { activeBtn.classList.remove('glass', 'text-white/80'); activeBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500', 'text-white', 'shadow-lg'); }
-        }
-
-        async function renderCategories() {
-            try {
-                let categories = ['All', 'Portrait', 'Trending', 'Nature', 'Cinematic', 'Birthday', 'Bike', 'Car'];
-                const container = document.getElementById('categoriesContainer');
-                if (!container) return;
-                container.innerHTML = categories.map(cat => `<button data-category-btn="${cat}" onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">${cat}</button>`).join('');
-            } catch (error) { console.error('Error rendering categories:', error); }
-        }
-
         function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
         function formatNumber(num) { if (!num) return '0'; if (num >= 1000) return (num / 1000).toFixed(1) + 'k'; return num.toString(); }
         function showError(message) { const grid = document.getElementById('promptsGrid'); if (grid) { grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-exclamation-triangle text-yellow-400 text-6xl mb-4"></i><p class="text-white/80 text-lg">${message}</p><button onclick="fetchPrompts()" class="mt-4 glass px-6 py-2 rounded-full text-white hover:bg-white/20 transition-all">Try Again</button></div>`; } }
 
         // ========== EVENT LISTENERS ==========
-        document.getElementById('searchInput').addEventListener('input', (e) => { currentSearchTerm = e.target.value; filterPrompts(); });
+        document.getElementById('searchInput').addEventListener('input', (e) => { currentSearchTerm = e.target.value; filterPromptsAndRender(); });
         document.getElementById('closeAdBtn').addEventListener('click', closeAdModalAndCopy);
         document.getElementById('confirmExitBtn').addEventListener('click', exitApp);
         document.getElementById('cancelExitBtn').addEventListener('click', hideExitModal);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeSidebar(); if (!document.getElementById('adModal').classList.contains('hidden')) closeAdModal(); if (!document.getElementById('exitModal').classList.contains('hidden')) hideExitModal(); } });
 
         // ========== INITIALIZE ==========
-        document.addEventListener('DOMContentLoaded', () => { 
-            fetchPrompts();
-        });
+        document.addEventListener('DOMContentLoaded', () => { fetchPrompts(); });
     </script>
 </body>
 </html>
