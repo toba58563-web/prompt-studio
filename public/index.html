@@ -15,11 +15,21 @@
                         'slide-up': 'slideUp 0.3s ease-out',
                         'slide-in': 'slideIn 0.3s ease-out',
                         'spin-slow': 'spin 0.8s linear infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                        'scroll-reveal': 'scrollReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                         slideIn: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(0)' } },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' }
+                        },
+                        scrollReveal: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
                     },
                 },
             },
@@ -64,6 +74,81 @@
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(139, 92, 246, 0.5);
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Scroll Reveal Elements - Initially Hidden */
+        .reveal-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Staggered Animation Delay Classes */
+        .reveal-card[data-delay="1"] { transition-delay: 0.05s; }
+        .reveal-card[data-delay="2"] { transition-delay: 0.1s; }
+        .reveal-card[data-delay="3"] { transition-delay: 0.15s; }
+        .reveal-card[data-delay="4"] { transition-delay: 0.2s; }
+        .reveal-card[data-delay="5"] { transition-delay: 0.25s; }
+        .reveal-card[data-delay="6"] { transition-delay: 0.3s; }
+        .reveal-card[data-delay="7"] { transition-delay: 0.35s; }
+        .reveal-card[data-delay="8"] { transition-delay: 0.4s; }
+        
+        /* Enhanced Skeleton Loader with Shimmer */
+        .skeleton {
+            background: linear-gradient(110deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.08) 25%, 
+                rgba(255, 255, 255, 0.15) 50%, 
+                rgba(255, 255, 255, 0.08) 75%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            background-size: 200% 100%;
+            animation: skeletonShimmer 1.8s ease-in-out infinite;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes skeletonShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Image loading shimmer effect */
+        .image-container.loading {
+            position: relative;
+            background: linear-gradient(110deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.12) 50%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            background-size: 200% 100%;
+            animation: imageShimmer 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes imageShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .image-container img {
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-container img.loaded {
+            opacity: 1;
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
         }
         
         .sidebar-glass {
@@ -114,18 +199,6 @@
         
         .categories-scroll::-webkit-scrollbar {
             height: 4px;
-        }
-        
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 20px;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
         
         .line-clamp-2 {
@@ -527,22 +600,21 @@
 
     <!-- Banner Ad Container -->
     <div id="bannerAdContainer" class="banner-ad-container">
-    <div class="ad-space">
-        <div class="ad-placeholder" id="bannerAdPlaceholder">
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : 'e9d01f858e3adc8437cbab86756087f4',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/e9d01f858e3adc8437cbab86756087f4/invoke.js"></script>
+        <div class="ad-space">
+            <div class="ad-placeholder" id="bannerAdPlaceholder">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : 'e9d01f858e3adc8437cbab86756087f4',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/e9d01f858e3adc8437cbab86756087f4/invoke.js"></script>
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- ========== UPDATED: Monetag Vignette Modal ========== -->
     <div id="adModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center hidden">
@@ -603,51 +675,49 @@
         let monetagScriptLoaded = false;
         
         // Kodular ke Back Button ke liye Main Function
-function handleBackPress() {
-    // 1. Sidebar check
-    const sidebar = document.getElementById('sidebarMenu');
-    if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-        // Sidebar ko band karo
-        sidebar.classList.add('-translate-x-full'); 
-        return;
-    }
+        function handleBackPress() {
+            // 1. Sidebar check
+            const sidebar = document.getElementById('sidebarMenu');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full'); 
+                return;
+            }
 
-    // 2. Image Modal check
-    const imageModal = document.getElementById('imageModal');
-    if (imageModal && imageModal.classList.contains('active')) {
-        imageModal.classList.remove('active');
-        return;
-    }
+            // 2. Image Modal check
+            const imageModal = document.getElementById('imageModal');
+            if (imageModal && imageModal.classList.contains('active')) {
+                imageModal.classList.remove('active');
+                return;
+            }
 
-    // 3. Exit Modal dikhao agar kuch nahi khula hai
-    openExitPopup();
-}
+            // 3. Exit Modal dikhao agar kuch nahi khula hai
+            openExitPopup();
+        }
 
-function openExitPopup() {
-    const exitModal = document.getElementById('exitModal');
-    if (exitModal) {
-        exitModal.classList.remove('hidden');
-    }
-}
+        function openExitPopup() {
+            const exitModal = document.getElementById('exitModal');
+            if (exitModal) {
+                exitModal.classList.remove('hidden');
+            }
+        }
 
-// Exit Modal ke buttons ko activate karo
-document.addEventListener('DOMContentLoaded', () => {
-    const cancelBtn = document.getElementById('cancelExitBtn');
-    const confirmBtn = document.getElementById('confirmExitBtn');
+        // Exit Modal ke buttons ko activate karo
+        document.addEventListener('DOMContentLoaded', () => {
+            const cancelBtn = document.getElementById('cancelExitBtn');
+            const confirmBtn = document.getElementById('confirmExitBtn');
 
-    if (cancelBtn) {
-        cancelBtn.onclick = () => {
-            document.getElementById('exitModal').classList.add('hidden');
-        };
-    }
+            if (cancelBtn) {
+                cancelBtn.onclick = () => {
+                    document.getElementById('exitModal').classList.add('hidden');
+                };
+            }
 
-    if (confirmBtn) {
-        confirmBtn.onclick = () => {
-            window.close(); // App close karne ke liye
-        };
-    }
-});
-
+            if (confirmBtn) {
+                confirmBtn.onclick = () => {
+                    window.close(); // App close karne ke liye
+                };
+            }
+        });
 
         // ========== TOAST FUNCTIONS ==========
         function showToast(message, isError = false, duration = 2000) {
@@ -821,8 +891,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ========== CLOSE AD MODAL WITHOUT COPY (Cancel) ==========
         function closeAdModal() {
-            
-            
             stopAdTimer();
             
             const timerDisplay = document.getElementById('adTimer');
@@ -866,6 +934,70 @@ document.addEventListener('DOMContentLoaded', () => {
             splash.classList.add('hide');
             setTimeout(() => { splash.style.display = 'none'; }, 500);
         }, 2000);
+
+        // ========== SCROLL REVEAL ANIMATION WITH INTERSECTION OBSERVER ==========
+        function initScrollReveal() {
+            const revealElements = document.querySelectorAll('.glass-card, .reveal-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Add delay based on index for staggered effect
+                        const delay = Math.min((index % 8) + 1, 8);
+                        entry.target.style.transitionDelay = `${delay * 0.05}s`;
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target); // Stop observing once revealed
+                    }
+                });
+            }, {
+                threshold: 0.1, // Trigger when 10% of element is visible
+                rootMargin: '0px 0px -50px 0px' // Slight offset for better timing
+            });
+            
+            // Observe each glass-card
+            revealElements.forEach((el) => {
+                observer.observe(el);
+            });
+        }
+
+        // ========== IMAGE LOADING WITH SKELETON SHIMMER ==========
+        function setupImageLoading() {
+            const images = document.querySelectorAll('.image-container img');
+            
+            images.forEach(img => {
+                const container = img.closest('.image-container');
+                
+                // Add loading class while image loads
+                if (container) {
+                    container.classList.add('loading');
+                }
+                
+                // Handle image load event
+                img.addEventListener('load', () => {
+                    if (container) {
+                        container.classList.remove('loading');
+                        img.classList.add('loaded');
+                    }
+                });
+                
+                // Handle image error
+                img.addEventListener('error', () => {
+                    if (container) {
+                        container.classList.remove('loading');
+                        // Set fallback image
+                        img.src = 'https://picsum.photos/400/600';
+                    }
+                });
+                
+                // If image already loaded
+                if (img.complete) {
+                    if (container) {
+                        container.classList.remove('loading');
+                        img.classList.add('loaded');
+                    }
+                }
+            });
+        }
 
         // ========== MODAL FUNCTIONS ==========
         function isAnyModalOpen() {
@@ -983,41 +1115,73 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const grid = document.getElementById('promptsGrid');
                 if (grid) grid.innerHTML = `<div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>`;
+                
                 const response = await fetch('/api/prompts');
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Failed to fetch prompts');
+                
                 let prompts = [];
                 if (data.prompts) prompts = data.prompts;
                 else if (Array.isArray(data)) prompts = data;
+                
                 currentPrompts = prompts.map(prompt => ({ ...prompt, isLiked: false }));
                 filterPrompts();
                 await renderCategories();
+                
                 const countElem = document.getElementById('promptCount');
                 if (countElem) countElem.textContent = `${currentPrompts.length}`;
+                
                 console.log(`✅ Loaded ${currentPrompts.length} prompts`);
-            } catch (error) { console.error('Error fetching prompts:', error); showError('Failed to load prompts.'); }
+                
+                // Initialize animations after prompts are loaded
+                setTimeout(() => {
+                    initScrollReveal();
+                    setupImageLoading();
+                }, 200);
+                
+            } catch (error) { 
+                console.error('Error fetching prompts:', error); 
+                showError('Failed to load prompts.'); 
+            }
         }
 
         function renderPrompts(prompts) {
             const grid = document.getElementById('promptsGrid');
             if (!grid) return;
-            if (!prompts || prompts.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-inbox text-white/40 text-6xl mb-4"></i><p class="text-white/60 text-lg">No prompts found</p></div>`; return; }
-            grid.innerHTML = prompts.map(prompt => `
-                <div class="glass-card transition-all duration-300 animate-fade-in" data-prompt-id="${prompt._id}">
+            
+            if (!prompts || prompts.length === 0) { 
+                grid.innerHTML = `<div class="col-span-2 text-center py-12"><i class="fas fa-inbox text-white/40 text-6xl mb-4"></i><p class="text-white/60 text-lg">No prompts found</p></div>`; 
+                return; 
+            }
+            
+            grid.innerHTML = prompts.map((prompt, index) => `
+                <div class="glass-card transition-all duration-300 animate-fade-in reveal-card" data-delay="${(index % 8) + 1}">
                     <div class="image-container" onclick="openImageModal('${prompt.imageUrl || 'https://picsum.photos/400/600'}')">
-                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" alt="${escapeHtml(prompt.title)}" loading="lazy" onerror="this.src='https://picsum.photos/400/600'">
-                        <div class="absolute top-2 right-2 glass px-1.5 py-0.5 rounded-full text-xs text-white"><i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}</div>
-                        <div class="absolute bottom-2 left-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">${escapeHtml(prompt.category || 'General')}</div>
+                        <img src="${prompt.imageUrl || 'https://picsum.photos/400/600'}" 
+                             alt="${escapeHtml(prompt.title)}" 
+                             loading="lazy"
+                             onerror="this.src='https://picsum.photos/400/600'">
+                        <div class="absolute top-2 right-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
+                            <i class="fas fa-eye text-xs"></i> ${formatNumber(prompt.views || 0)}
+                        </div>
+                        <div class="absolute bottom-2 left-2 glass px-1.5 py-0.5 rounded-full text-xs text-white">
+                            ${escapeHtml(prompt.category || 'General')}
+                        </div>
                     </div>
                     <div class="p-2">
                         <h3 class="text-white font-semibold compact-title mb-1 line-clamp-1">${escapeHtml(prompt.title)}</h3>
                         <p class="compact-prompt mb-2 line-clamp-2">${escapeHtml(prompt.prompt || 'No prompt available')}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1">
-                                <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}"><i class="fas fa-heart ${prompt.isLiked ? 'text-red-500' : 'text-white/60'} text-xs"></i></button>
+                                <button onclick="handleLike('${prompt._id}')" class="like-button transition-all hover:scale-110" data-id="${prompt._id}">
+                                    <i class="fas fa-heart ${prompt.isLiked ? 'text-red-500' : 'text-white/60'} text-xs"></i>
+                                </button>
                                 <span class="text-white/70 text-xs like-count" data-id="${prompt._id}">${formatNumber(prompt.likes || 0)}</span>
                             </div>
-                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1"><i class="fas fa-copy text-xs"></i> Copy</button>
+                            <button onclick="handleCopyClick('${escapeHtml(prompt.prompt).replace(/'/g, "\\'")}', this)" 
+                                    class="copy-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1">
+                                <i class="fas fa-copy text-xs"></i> Copy
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1066,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function renderCategories() {
             try {
-                let categories = ['All', 'Portrait', 'Nature', 'Cinematic', 'Cyberpunk', 'Fantasy', 'Abstract'];
+                let categories = ['All', 'Portrait', 'Trending', 'Nature', 'Cinematic', 'Birthday', 'Bike', 'Car'];
                 const container = document.getElementById('categoriesContainer');
                 if (!container) return;
                 container.innerHTML = categories.map(cat => `<button data-category-btn="${cat}" onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-full transition-all whitespace-nowrap text-sm ${currentCategory === cat ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' : 'glass text-white/80 hover:bg-white/20'}">${cat}</button>`).join('');
@@ -1085,7 +1249,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeSidebar(); if (!document.getElementById('adModal').classList.contains('hidden')) closeAdModal(); if (!document.getElementById('exitModal').classList.contains('hidden')) hideExitModal(); } });
 
         // ========== INITIALIZE ==========
-        document.addEventListener('DOMContentLoaded', () => { fetchPrompts(); });
+        document.addEventListener('DOMContentLoaded', () => { 
+            fetchPrompts();
+        });
     </script>
 </body>
 </html>
